@@ -12,7 +12,7 @@ wanted_list = ["$329.00","Apple AirPods Pro (2nd Generation)"]
 scraper = AutoScraper()
 result = scraper.build(url,wanted_list)
 grouped_results = scraper.get_result_similar(url,grouped=True)
-
+#print
 print(grouped_results)
 #dict_key_price variable contains the first dict key object name
 #and then prints the value of the key. Thw reason why we are doing it this way is that
