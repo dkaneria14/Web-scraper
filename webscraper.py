@@ -8,7 +8,7 @@ import os
 import ssl
 from autoscraper import AutoScraper
 url = "https://www.amazon.ca/s?k=airpods+pro+2"
-wanted_list = ["$329.00","Apple AirPods Pro (2nd Generation)"]
+wanted_list = ["$329.00","Apple AirPods (2nd Generation)"]
 scraper = AutoScraper()
 result = scraper.build(url,wanted_list)
 grouped_results = scraper.get_result_similar(url,grouped=True)
