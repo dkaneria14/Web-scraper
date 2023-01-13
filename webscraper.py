@@ -12,17 +12,18 @@ wanted_list = ["$329.00","Apple AirPods (2nd Generation)"]
 scraper = AutoScraper()
 result = scraper.build(url,wanted_list)
 grouped_results = scraper.get_result_similar(url,grouped=True)
-#print
 print(grouped_results)
+
 #dict_key_price variable contains the first dict key object name
 #and then prints the value of the key. Thw reason why we are doing it this way is that
 #dict key name keeps on changing whenever we run the response, so dynamically we are assinging 
 #the dict key name and printing its value
 dict_key_prices = next(iter(grouped_results))
-price = grouped_results[dict_key_prices][0]
-price_of_air_pods_pro_2 = price.replace("$","")
-price_of_air_pods_pro_2 = float(price_of_air_pods_pro_2)
-print(price_of_air_pods_pro_2)
+print(dict_key_prices)
+# price = grouped_results[dict_key_prices][0]
+# price_of_air_pods_pro_2 = price.replace("$","")
+# price_of_air_pods_pro_2 = float(price_of_air_pods_pro_2)
+# print(price_of_air_pods_pro_2)
 
 def sendEmail(price_of_air_pods_pro_2):
     from Google import Create_Service
@@ -48,6 +49,6 @@ def sendEmail(price_of_air_pods_pro_2):
     print(message)
         
         
-if price_of_air_pods_pro_2<340.00:
-    sendEmail(price_of_air_pods_pro_2)
+# if price_of_air_pods_pro_2<340.00:
+#     sendEmail(price_of_air_pods_pro_2)
 
