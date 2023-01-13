@@ -1,7 +1,7 @@
 # Import smtplib for the actual sending function
 import smtplib
 
-# Testing joining repo
+# Joining Devs repo
 
 # Import the email modules we'll need
 from email.message import EmailMessage
@@ -42,7 +42,7 @@ def sendEmail(price_of_air_pods_pro_2):
 
     emailMsg = 'Price of Airpods pro is: ' + str(price_of_air_pods_pro_2)+'!'
     mimeMessage = MIMEMultipart()
-    mimeMessage['to'] = 'Add ypur email address'
+    mimeMessage['to'] = 'Add your email address'
     mimeMessage['subject'] = 'IMPORTANT : New Price of AirPods!!!!!'
     mimeMessage.attach(MIMEText(emailMsg, 'plain'))
     raw_string = base64.urlsafe_b64encode(mimeMessage.as_bytes()).decode()
