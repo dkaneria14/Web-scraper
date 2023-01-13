@@ -25,6 +25,7 @@ price = grouped_results[dict_key_prices][0]
 price_of_air_pods_pro_2 = price.replace("$", "")
 price_of_air_pods_pro_2 = float(price_of_air_pods_pro_2)
 print(price_of_air_pods_pro_2)
+print()
 
 
 def sendEmail(price_of_air_pods_pro_2):
