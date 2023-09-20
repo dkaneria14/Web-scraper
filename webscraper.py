@@ -9,8 +9,8 @@ from email.message import EmailMessage
 import os
 import ssl
 from autoscraper import AutoScraper
-url = "https://www.amazon.ca/s?k=airpods+pro+2"
-wanted_list = ["$329.00", "Apple AirPods (2nd Generation)"]
+url = "https://www.amazon.ca/s?k=iphone+15+case&crid=3O1938P2MFON5&sprefix=%2Caps%2C92&ref=nb_sb_ss_sx-trend-t-ps-d-purchases-ten-ca_4_0"
+wanted_list = ["5.0"]
 scraper = AutoScraper()
 result = scraper.build(url, wanted_list)
 grouped_results = scraper.get_result_similar(url, grouped=True)
@@ -20,12 +20,12 @@ print(grouped_results)
 # and then prints the value of the key. Thw reason why we are doing it this way is that
 # dict key name keeps on changing whenever we run the response, so dynamically we are assinging
 # the dict key name and printing its value
-dict_key_prices = next(iter(grouped_results))
-price = grouped_results[dict_key_prices][0]
-price_of_air_pods_pro_2 = price.replace("$", "")
-price_of_air_pods_pro_2 = float(price_of_air_pods_pro_2)
-print(price_of_air_pods_pro_2)
-print()
+#dict_key_prices = next(iter(grouped_results))
+#price = grouped_results[dict_key_prices][0]
+#price_of_air_pods_pro_2 = price.replace("$", "")
+#price_of_air_pods_pro_2 = float(price_of_air_pods_pro_2)
+#print(price_of_air_pods_pro_2)
+#print()
 
 
 def sendEmail(price_of_air_pods_pro_2):
