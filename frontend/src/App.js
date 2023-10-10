@@ -1,7 +1,6 @@
 import './App.css';
 import { Typography, Stack, Chip, TextField, Card } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import logo from "./logotest.png"
@@ -86,12 +85,12 @@ function App() {
             })
           }
         </Stack>
-        <Paper>
+        <Typography sx={{ mt: 3 }} align='center' color='white' variant="h6">The text below will display the API response in json format.</Typography>
+        <Card>
           {
             JSON.stringify(stockInfo)
           }
-        </Paper>
-        {/* <Typography sx={{ mt: 3 }} align='center' color='primary' variant="h5">Hana hello to react</Typography> */}
+        </Card>
       </header>
     </div>
   );
