@@ -54,11 +54,11 @@ function App() {
       <header className="App-header">
         <img src={logo} alt="Logo" width="400" />
         <p>
-          Buy when it makes sense.
+          Watch Your Stock Around The Clock
         </p>
         <Paper
           component="form"
-          sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
+          sx={{ p: '2px 20px', display: 'flex', alignItems: 'center', width: 600, height: 60  }}
         >
           <TextField
             sx={{ ml: 1, flex: 1 }}
@@ -66,9 +66,12 @@ function App() {
             value={searchStock}
             variant="standard"
             onChange={(e) => setSearchStock(e.target.value)}
+            InputProps={{
+              disableUnderline: true,
+              style: { fontSize: '25px' }}}
           />
-          <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleSubmit}>
-            <SearchIcon />
+          <IconButton type="button" sx={{ p: '10px' }}  aria-label="search" onClick={handleSubmit}>
+            <SearchIcon fontSize = "large"/>
           </IconButton>
         </Paper>
         <Stack direction="row" spacing={1} margin="15px">
@@ -85,7 +88,7 @@ function App() {
             })
           }
         </Stack>
-        <Typography sx={{ mt: 3 }} align='center' color='white' variant="h6">The text below will display the API response in json format.</Typography>
+        <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography>
         <Card>
           {
             JSON.stringify(stockInfo)
