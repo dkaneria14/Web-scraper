@@ -1,4 +1,5 @@
 import './App.css';
+import Navbar from "./Navbar";
 import { Typography, Stack, Chip, TextField, Card } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
@@ -6,9 +7,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import logo from "./logotest.png"
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Route, Routes } from "react-router-dom"
 
 function App() {
-
+ 
   const [tempStockList, setTempStockList] = useState([]);
   const [searchStock, setSearchStock] = useState("");
   const [stockInfo, setStockInfo] = useState({"test1":"hello", "test2": "hi"});
@@ -48,14 +50,23 @@ function App() {
   const handleClick = () => {
     console.info('You clicked the Chip.');
   };
-
+  
   return (
     <div className="App">
+      <Navbar />
+      <div className="container">
+        <Routes>
+          {/* <Route path="/" element={<Home />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/about" element={<About />} /> */}
+        </Routes>
+      </div>
       <header className="App-header">
-        <img src={logo} alt="Logo" width="400" />
+        {/* <img src={logo} alt="Logo" width="400" /> */}
         <p>
           Buy when it makes sense.
         </p>
+        
         <Paper
           component="form"
           sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
@@ -94,6 +105,8 @@ function App() {
       </header>
     </div>
   );
+ 
+  
 }
 
 export default App;
