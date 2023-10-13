@@ -12,7 +12,9 @@ function App() {
   const [tempStockList, setTempStockList] = useState([]);
   const [searchStock, setSearchStock] = useState("");
   const [stockInfo, setStockInfo] = useState({"test1":"hello", "test2": "hi"});
-  // const apiUrl = "";
+  const [flag, setFlag] = useState(false);
+  
+  const apiUrl = "http://127.0.0.1:8000/stockList/";
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem('stockList'));
@@ -21,21 +23,26 @@ function App() {
     }
   }, [])
 
+  const getStockData = (name) => {
+    axios.get(apiUrl + name)
+      .then((response) => {
+        if(response.data)
+        setStockInfo(response.data);
+      setFlag(true);
+      })
+      .catch((error) => {
+        // Handle any errors here
+        console.error('Error fetching data:', error);
+      });
+  }
+
   const handleSubmit = () => {
     var temp = [...tempStockList];
     temp.push(searchStock);
     setTempStockList(temp);
     localStorage.setItem('stockList', JSON.stringify(temp));
-
-    // axios.get(apiUrl)
-    //   .then((response) => {
-    //     if(response.data)
-    //     setStockInfo(response.data);
-    //   })
-    //   .catch((error) => {
-    //     // Handle any errors here
-    //     console.error('Error fetching data:', error);
-    //   });
+    // get stock data API GET CALL
+    getStockData(searchStock);
   }
 
   const handleDelete = (item) => {
@@ -45,8 +52,9 @@ function App() {
     localStorage.setItem('stockList', JSON.stringify(temp));
   }
 
-  const handleClick = () => {
+  const handleClick = (x) => {
     console.info('You clicked the Chip.');
+    // getStockData(x);
   };
 
   return (
@@ -78,7 +86,7 @@ function App() {
                 <Chip
                 key={x}
                   label={x} color="primary"
-                  onClick={handleClick}
+                  onClick={handleClick(x)}
                   onDelete={(e) => handleDelete(x)}
                 />
               )
@@ -86,11 +94,14 @@ function App() {
           }
         </Stack>
         <Typography sx={{ mt: 3 }} align='center' color='white' variant="h6">The text below will display the API response in json format.</Typography>
-        <Card>
+        {/* <Card sx={{ width: "275px", display: "flex" }}>
           {
             JSON.stringify(stockInfo)
           }
-        </Card>
+        </Card> */}
+        {
+          console.log(stockInfo)
+        }
       </header>
     </div>
   );

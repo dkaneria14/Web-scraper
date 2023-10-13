@@ -16,7 +16,3 @@ class DataBase:
     def get_stocks(self):
         obj = self.collection.find_one()
         return(obj["stocks"])
-
-  
-
-
