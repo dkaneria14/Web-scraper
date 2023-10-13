@@ -96,13 +96,8 @@ function App() {
             })
           }
         </Stack>
-<<<<<<< HEAD
-        <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography>
-        <Card>
-=======
         <Typography sx={{ mt: 3 }} align='center' color='white' variant="h6">The text below will display the API response in json format.</Typography>
         {/* <Card sx={{ width: "275px", display: "flex" }}>
->>>>>>> 4b45986e5d519afdc1aaaa4bd229fe0d3a4faaa9
           {
             JSON.stringify(stockInfo)
           }
