@@ -1,5 +1,5 @@
 // import { Link, useMatch, useResolvedPath } from "react-router-dom"
-import logo from "./logotest.png"
+import logo1 from "./logotest1.png"
 import {TextField} from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 export default function Navbar() {
   return (
     <nav className="nav" style={{ padding: '10px 0', height: '60px' }}>
-      <img src={logo} alt="Logo" width="200" />
+      <img src={logo1} alt="Logo" width="80" />
       <Paper
           component="form"
           sx={{ p: '10px 15px', display: 'flex', alignItems: 'center', width: 400, marginLeft: 'auto', height: 40 }}
@@ -29,15 +29,4 @@ export default function Navbar() {
   )
 }
 
-// function CustomLink({ to, children, ...props }) {
-//   const resolvedPath = useResolvedPath(to)
-//   const isActive = useMatch({ path: resolvedPath.pathname, end: true })
 
-//   return (
-//     <li className={isActive ? "active" : ""}>
-//       <Link to={to} {...props}>
-//         {children}
-//       </Link>
-//     </li>
-//   )
-// }

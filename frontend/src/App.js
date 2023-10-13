@@ -56,13 +56,11 @@ function App() {
       <Navbar />
       <div className="container">
         <Routes>
-          {/* <Route path="/" element={<Home />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/about" element={<About />} /> */}
+          {}
         </Routes>
       </div>
       <header className="App-header">
-        {/* <img src={logo} alt="Logo" width="400" /> */}
+        {<img src={logo} alt="Logo" width="400" />}
         <p>
           Buy when it makes sense.
         </p>
