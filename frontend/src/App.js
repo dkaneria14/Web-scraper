@@ -1,4 +1,5 @@
 import './App.css';
+import Navbar from "./Navbar";
 import { Typography, Stack, Chip, TextField, Card } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
@@ -6,9 +7,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import logo from "./logotest.png"
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Route, Routes } from "react-router-dom"
 
 function App() {
-
+ 
   const [tempStockList, setTempStockList] = useState([]);
   const [searchStock, setSearchStock] = useState("");
   const [stockInfo, setStockInfo] = useState({"test1":"hello", "test2": "hi"});
@@ -56,14 +58,21 @@ function App() {
     console.info('You clicked the Chip.');
     // getStockData(x);
   };
-
+  
   return (
     <div className="App">
+      <Navbar />
+      <div className="container">
+        <Routes>
+          {}
+        </Routes>
+      </div>
       <header className="App-header">
-        <img src={logo} alt="Logo" width="400" />
+        {<img src={logo} alt="Logo" width="400" />}
         <p>
           Watch Your Stock Around The Clock
         </p>
+        
         <Paper
           component="form"
           sx={{ p: '2px 20px', display: 'flex', alignItems: 'center', width: 600, height: 60  }}
@@ -96,7 +105,7 @@ function App() {
             })
           }
         </Stack>
-        <Typography sx={{ mt: 3 }} align='center' color='white' variant="h6">The text below will display the API response in json format.</Typography>
+        <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography>
         {/* <Card sx={{ width: "275px", display: "flex" }}>
           {
             JSON.stringify(stockInfo)
@@ -108,6 +117,8 @@ function App() {
       </header>
     </div>
   );
+ 
+  
 }
 
 export default App;
