@@ -28,9 +28,9 @@ def get_stock_info(stockName:str):
     nvda_stock = yf.Ticker(stockName)
     return nvda_stock.info
 
-# @app.get("/stocklistDB")
+@app.get("/stocklistDB")
 
-# def get_list():
-#     obj = DataBase()
-#     return obj.get_stocks()
+def get_list():
+    obj = DataBase()
+    return obj.get_stocks()
 
