@@ -43,3 +43,6 @@
 /webScraperAmazon.ipynb
 /webScraperCostco.ipynb
 node_modules
+# Ignore python virtual environment/pycache files
+/venv
+__pycache__
