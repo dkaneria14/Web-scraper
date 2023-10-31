@@ -80,29 +80,48 @@ function App() {
   
   return (
     <div className="App">
-      <Navbar />
+      <Navbar selectedStocks={tempStockList} />
       <div className="container">
-        <Routes>
-          {}
-        </Routes>
+        <Routes>{}</Routes>
       </div>
       <header className="App-header">
         {<img src={logo} alt="Logo" width="400" />}
-        <p>
-          Watch Your Stock Around The Clock
-        </p>
+        <p>Watch Your Stock Around The Clock</p>
 
         {/* Search Bar */}
         <Paper
           component="form"
-          sx={{ p: '2px 20px', display: 'flex', alignItems: 'center', width: 600, height: 60 }}
+          sx={{
+            p: "2px 20px",
+            display: "flex",
+            alignItems: "center",
+            width: 600,
+            height: 60,
+          }}
         >
           <Autocomplete
             freeSolo
             id="ticker-search-autocomplete"
-            options={Object.keys(tickerList).map(key => `${key} - ${tickerList[key]}`)}
+            options={Object.keys(tickerList).map(
+              (key) => `${key} - ${tickerList[key]}`
+            )}
             sx={{ ml: 1, flex: 1 }}
-            renderInput={(params) =>
+            // Always open down and prevent overflow to scroll
+            componentsProps={{
+              popper: {
+                modifiers: [
+                  {
+                    name: "flip",
+                    enabled: false,
+                  },
+                  {
+                    name: "preventOverflow",
+                    enabled: true,
+                  },
+                ],
+              },
+            }}
+            renderInput={(params) => (
               <TextField
                 {...params}
                 focused={false}
@@ -110,38 +129,52 @@ function App() {
                 InputProps={{
                   ...params.InputProps,
                   disableUnderline: true,
-                  style: { fontSize: '25px', outline: 'none' }
+                  style: { fontSize: "25px", outline: "none" },
                 }}
                 onSelect={(e) => setSearchStock(e.target.value.split(" ")[0])}
                 // // sx={{ ml: 1, flex: 1 }}
                 placeholder="Search Stocks"
                 value={searchStock}
-              // variant="standard"
-              // onChange={(e) => setSearchStock(e.target.value)}
-              // InputProps={{
-              //   disableUnderline: true,
-              //   style: { fontSize: '25px' }
-              // }}
+                // variant="standard"
+                // onChange={(e) => setSearchStock(e.target.value)}
+                // InputProps={{
+                //   disableUnderline: true,
+                //   style: { fontSize: '25px' }
+                // }}
               />
-            }
+            )}
           />
-          <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleSubmit}>
+          <IconButton
+            type="button"
+            sx={{ p: "10px" }}
+            aria-label="search"
+            onClick={handleSubmit}
+          >
             <SearchIcon fontSize="large" />
           </IconButton>
         </Paper>
         <Stack direction="row" spacing={1} margin="15px">
-          {
-            tempStockList.map((x) => {
-              return (
-                <Chip
+          {tempStockList.length > 0 ? (
+            <Typography
+              sx={{ mt: 3 }}
+              align="center"
+              color="black"
+              variant="h6"
+            >
+              Selected Stocks:{" "}
+            </Typography>
+          ) : null}
+          {tempStockList.map((x) => {
+            return (
+              <Chip
                 key={x}
-                  label={x} color="primary"
-                  onClick={handleClick(x)}
-                  onDelete={(e) => handleDelete(x)}
-                />
-              )
-            })
-          }
+                label={x}
+                color="secondary"
+                onClick={handleClick(x)}
+                onDelete={(e) => handleDelete(x)}
+              />
+            );
+          })}
         </Stack>
         <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography>
         <StockCards>

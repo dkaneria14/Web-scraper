@@ -46,3 +46,5 @@ node_modules
 # Ignore python virtual environment/pycache files
 /venv
 __pycache__
+.env
+/frontend/package-lock.json
