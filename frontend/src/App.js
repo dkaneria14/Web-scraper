@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import logo from "./logotest.png"
 import axios from 'axios';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useEffect, useState } from 'react';
 import { Route, Routes } from "react-router-dom";
 
@@ -15,16 +16,20 @@ function App() {
  
   const [tempStockList, setTempStockList] = useState([]);
   const [searchStock, setSearchStock] = useState("");
-  const [stockInfo, setStockInfo] = useState({"test1":"hello", "test2": "hi"});
+  const [stockInfo, setStockInfo] = useState(null);
   const [flag, setFlag] = useState(false);
+  const [tickerList, setTickerList] = useState({});
   
   const apiUrl = "http://127.0.0.1:8000/stockList/";
+
+  const tickerListURL = "http://127.0.0.1:8000/stocklistDB/";
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem('stockList'));
     if (items) {
       setTempStockList(items);
     }
+    getTickers();
   }, [])
 
   const getStockData = (name) => {
@@ -40,7 +45,19 @@ function App() {
       });
   }
 
-  const handleSubmit = () => {
+  const getTickers = () => {
+    axios.get(tickerListURL)
+      .then((response) => {
+        if(response.data) setTickerList(response.data);
+      })
+      .catch((error) => {
+        // Handle any errors here
+        console.error('Error fetching data:', error);
+      });
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
     var temp = [...tempStockList];
     temp.push(searchStock);
     setTempStockList(temp);
@@ -74,23 +91,42 @@ function App() {
         <p>
           Watch Your Stock Around The Clock
         </p>
-        
+
+        {/* Search Bar */}
         <Paper
           component="form"
-          sx={{ p: '2px 20px', display: 'flex', alignItems: 'center', width: 600, height: 60  }}
+          sx={{ p: '2px 20px', display: 'flex', alignItems: 'center', width: 600, height: 60 }}
         >
-          <TextField
+          <Autocomplete
+            freeSolo
+            id="ticker-search-autocomplete"
+            options={Object.keys(tickerList).map(key => `${key} - ${tickerList[key]}`)}
             sx={{ ml: 1, flex: 1 }}
-            placeholder="Search Stocks"
-            value={searchStock}
-            variant="standard"
-            onChange={(e) => setSearchStock(e.target.value)}
-            InputProps={{
-              disableUnderline: true,
-              style: { fontSize: '25px' }}}
+            renderInput={(params) =>
+              <TextField
+                {...params}
+                focused={false}
+                variant="standard"
+                InputProps={{
+                  ...params.InputProps,
+                  disableUnderline: true,
+                  style: { fontSize: '25px', outline: 'none' }
+                }}
+                onSelect={(e) => setSearchStock(e.target.value.split(" ")[0])}
+                // // sx={{ ml: 1, flex: 1 }}
+                placeholder="Search Stocks"
+                value={searchStock}
+              // variant="standard"
+              // onChange={(e) => setSearchStock(e.target.value)}
+              // InputProps={{
+              //   disableUnderline: true,
+              //   style: { fontSize: '25px' }
+              // }}
+              />
+            }
           />
-          <IconButton type="button" sx={{ p: '10px' }}  aria-label="search" onClick={handleSubmit}>
-            <SearchIcon fontSize = "large"/>
+          <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleSubmit}>
+            <SearchIcon fontSize="large" />
           </IconButton>
         </Paper>
         <Stack direction="row" spacing={1} margin="15px">
@@ -116,13 +152,12 @@ function App() {
           </div>
      </StockCards>
         {/* <Card sx={{ width: "275px", display: "flex" }}>
+        {stockInfo ? <Card sx={{ width: "80%", display: "flex", overflow: "scroll" }}>
           {
             JSON.stringify(stockInfo)
           }
-        </Card> */}
-        {
-          console.log(stockInfo)
-        }
+        </Card> : null}
+        
       </header>
     </div>
   );
