@@ -1,5 +1,6 @@
 import './App.css';
 import Navbar from "./Navbar";
+import StockCards from "./stockCards";
 import { Typography, Stack, Chip, TextField, Card } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
@@ -8,7 +9,8 @@ import logo from "./logotest.png"
 import axios from 'axios';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useEffect, useState } from 'react';
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes } from "react-router-dom";
+
 
 function App() {
  
@@ -142,11 +144,13 @@ function App() {
           }
         </Stack>
         <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography>
-        {stockInfo ? <Card sx={{ width: "80%", display: "flex", overflow: "scroll" }}>
-          {
-            JSON.stringify(stockInfo)
-          }
-        </Card> : null}
+        <StockCards>
+          <div className="container">
+            <Routes>
+              {}
+            </Routes>
+          </div>
+     </StockCards>
         
       </header>
     </div>
