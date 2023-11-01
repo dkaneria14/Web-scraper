@@ -151,12 +151,6 @@ function App() {
             </Routes>
           </div>
      </StockCards>
-        {/* <Card sx={{ width: "275px", display: "flex" }}>
-        {stockInfo ? <Card sx={{ width: "80%", display: "flex", overflow: "scroll" }}>
-          {
-            JSON.stringify(stockInfo)
-          }
-        </Card> : null}
         
       </header>
     </div>
