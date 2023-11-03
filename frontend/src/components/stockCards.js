@@ -5,8 +5,8 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Image from './appleGraph.png';
-import Image2 from './amazonGraph.png';
+import Image from '../assets/stockGraphs/AAPL.png';
+import Image2 from '../assets/stockGraphs/AMZN.png';
 import { Grid } from '@mui/material';
 
 export default function MediaCard() {

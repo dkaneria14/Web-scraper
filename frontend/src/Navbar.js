@@ -48,8 +48,8 @@ export default function Navbar(props) {
   };
 
   return (
-    <nav className="nav" style={{ padding: "10px 0", height: "60px" }}>
-      <img src={logo1} alt="Logo" width="80" />
+    <div className="nav">
+      <img src={logo1} alt="Logo" width="60" height="60" style={{ marginLeft: 10 }} />
       <Paper
         component="form"
         sx={{
@@ -58,6 +58,7 @@ export default function Navbar(props) {
           alignItems: "center",
           width: 400,
           marginLeft: "auto",
+          mr: 3,
           height: 40,
         }}
         onSubmit={signUp}
@@ -82,7 +83,7 @@ export default function Navbar(props) {
         <Alert onClose={handleClose} severity={errorMessage === emailVerified ? "success" : "error"} sx={{ width: "100%" }}>{errorMessage}</Alert>
       </Snackbar>
       {verify ? createVerifyModal() : null}
-    </nav>
+    </div>
   );
 }
 

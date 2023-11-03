@@ -1,6 +1,6 @@
 import './App.css';
 import Navbar from "./Navbar";
-import StockCards from "./stockCards";
+import StockCards from "./components/stockCards";
 import { Typography, Stack, Chip, TextField, Card } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
@@ -132,15 +132,8 @@ function App() {
                   style: { fontSize: "25px", outline: "none" },
                 }}
                 onSelect={(e) => setSearchStock(e.target.value.split(" ")[0])}
-                // // sx={{ ml: 1, flex: 1 }}
                 placeholder="Search Stocks"
                 value={searchStock}
-                // variant="standard"
-                // onChange={(e) => setSearchStock(e.target.value)}
-                // InputProps={{
-                //   disableUnderline: true,
-                //   style: { fontSize: '25px' }
-                // }}
               />
             )}
           />
