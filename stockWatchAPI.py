@@ -3,16 +3,20 @@ import yfinance as yf
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database.database import DataBase
+from api import email
 import datetime
 import pytz
 import json
 
 app = FastAPI()
+# Include relevant routers for endpoints
+app.include_router(email.router)
 
 origins = [
     "http://localhost:8080",
     "http://localhost:3000",
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:3000"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -50,4 +54,3 @@ def filter(stockName: str):
     my_json_string = json.dumps({'stockName': stockName, 'shortName': shortName, 'currentPrice': currentPrice, 'currentDate': current_date, 'currentTime': current_time})
     my_json = json.loads(my_json_string)
     return my_json
-       
