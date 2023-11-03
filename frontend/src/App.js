@@ -1,6 +1,6 @@
 import './App.css';
 import Navbar from "./Navbar";
-import StockCards from "./components/stockCards";
+import StockCard from "./components/StockCard";
 import { Typography, Stack, Chip, TextField, Card } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
@@ -10,6 +10,7 @@ import axios from 'axios';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useEffect, useState } from 'react';
 import { Route, Routes } from "react-router-dom";
+import { Grid } from "@mui/material";
 
 
 function App() {
@@ -77,7 +78,25 @@ function App() {
     console.info('You clicked the Chip.');
     // getStockData(x);
   };
-  
+
+  // Mock Stock Card Data
+  const mockStockCardData = {
+    AAPL: {
+      name: "Apple Inc",
+      ticker: "AAPL",
+      price: "168.22",
+      priceChange: "0.54",
+      percentChange: "+1.19",
+    },
+    AMZN: {
+      name: "Amazon.com, Inc",
+      ticker: "AMZN",
+      price: "127.74",
+      priceChange: "1.33",
+      percentChange: "-0.82",
+    },
+  };
+
   return (
     <div className="App">
       <Navbar selectedStocks={tempStockList} />
@@ -169,15 +188,15 @@ function App() {
             );
           })}
         </Stack>
-        <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography>
-        <StockCards>
-          <div className="container">
-            <Routes>
-              {}
-            </Routes>
-          </div>
-     </StockCards>
-        
+        {/* <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography> */}
+        <div>
+          <Grid alignItems="center" container spacing={2}>
+          {tempStockList.map((x) => {
+            console.log(x);
+            return (<StockCard cardInfo={mockStockCardData[x]}/>);
+          })}
+          </Grid>
+        </div>
       </header>
     </div>
   );

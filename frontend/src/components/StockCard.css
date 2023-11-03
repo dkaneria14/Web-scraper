@@ -1,0 +1,8 @@
+.stock-card {
+    cursor: pointer;
+    transition: all ease-in-out 0.5s;
+}
+
+.stock-card:hover {
+    transform: scale(1.10);
+}
