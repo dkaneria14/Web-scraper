@@ -27,6 +27,13 @@ export default function StockCard(props) {
             <CardMedia component="img" height="90" image={Fallback} alt="" />
             {refreshing ? <CircularProgress /> : <CardContent>
               <Typography
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "2",
+                  WebkitBoxOrient: "vertical",
+                }}
                 gutterBottom
                 variant="h6"
                 component="div"

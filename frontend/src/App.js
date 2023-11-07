@@ -13,7 +13,19 @@ import { Route, Routes } from "react-router-dom";
 import { Grid } from "@mui/material";
 import apiEndpoint from './apiEndpoint';
 import { CircularProgress } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+const theme = createTheme({
+  typography: {
+    "fontFamily": `'Quicksand',-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;`,
+    "fontWeightLight": 400,
+    "fontWeightRegular": 500,
+    "fontWeightMedium": 600,
+    "fontWeightBold": 700,
+   }
+});
 
 function App() {
  
@@ -105,20 +117,21 @@ function App() {
 
   const generateStockCardInfo = (ticker) => {
     if (!stockInfo[ticker]) return null
-    const { symbol, longName, currentPrice, previousClose } = stockInfo[ticker];
+    const { symbol, shortName, currentPrice, previousClose } = stockInfo[ticker];
     // If required properties are not available, do not generate card
-    if (!(symbol && longName && currentPrice && previousClose)) return null;
+    if (!(symbol && shortName && currentPrice && previousClose)) return null;
     const curr = parseFloat(currentPrice).toFixed(2);
     const prev = parseFloat(previousClose);
     const priceChange = (curr - prev).toFixed(2).toString();
     const percentChange = (((curr - prev) / Math.abs(prev)) * 100)
       .toFixed(2)
       .toString();
-    const cardInfo = { name: longName, ticker: symbol, price: curr, priceChange, percentChange};
+    const cardInfo = { name: shortName, ticker: symbol, price: curr, priceChange, percentChange};
     return cardInfo;
   };
 
   return (
+    <ThemeProvider theme={theme}>
     <div className="App">
       <Navbar selectedStocks={tempStockList} />
       <div className="container">
@@ -187,7 +200,7 @@ function App() {
             <SearchIcon fontSize="large" />
           </IconButton>
         </Paper>
-        <Stack sx={{ width: "80%", flexWrap: "wrap"}} direction="row" spacing={1} rowGap={1} margin="15px" width="100%">
+        <Stack sx={{ width: "80%", flexWrap: "wrap"}} direction="row" spacing={1} rowGap={1} margin="15px">
           {tempStockList.length > 0 ? (
             <Typography
               sx={{ mt: 3 }}
@@ -211,7 +224,7 @@ function App() {
           })}
         </Stack>
         {/* <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography> */}
-        <div style={{ overflow: "scroll", padding: "20px"}}>
+        <div style={{ overflowY: "scroll", padding: "20px"}}>
           <Grid sx={{ mb: 1}} justifyContent="center" alignItems="center" container item spacing={2} xs={12} md={12}>
           {stockInfoLoaded && stockInfo && tempStockList.length > 0 ? tempStockList.map((ticker) => {
             // Grab Stock Data - This should be refactored into its own function though.
@@ -222,6 +235,7 @@ function App() {
           </div>
       </header>
     </div>
+    </ThemeProvider>
   );
  
   
