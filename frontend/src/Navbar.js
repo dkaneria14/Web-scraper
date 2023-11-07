@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import axios from "axios";
 import VerificationModal from './components/VerificationModal';
+import apiEndpoint from "./apiEndpoint";
 
 const noStockError = "Error - Please select some stocks below first.";
 const emailVerifiedError = "Your email is not yet verified. Please follow verification instructions.";
@@ -17,12 +18,13 @@ export default function Navbar(props) {
   const [errorMessage, setErrorMsg] = useState(noStockError);
   const [verify, setVerify] = useState(false);
   const [signUpEmail, setEmail] = useState("");
-  const verificationEndpoint = "http://127.0.0.1:8000/email/verified/";
+  const verificationEndpoint =  apiEndpoint + "/email/verified/";
 
   const signUp = (event) => {
     event.preventDefault();
     if (props.selectedStocks.length === 0) return showError(true);
     // Otherwise check if email is verified or not before proceeding to Modal
+    console.log(verificationEndpoint + signUpEmail);
     axios.get(verificationEndpoint + signUpEmail)
       .then((response) => {
         if(response.data) {

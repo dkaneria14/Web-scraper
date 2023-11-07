@@ -1,23 +1,31 @@
-import * as React from "react";
+import {useState } from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Image from "../assets/stockGraphs/AAPL.png";
-import Image2 from "../assets/stockGraphs/AMZN.png";
+import Fallback from "../assets/stockGraphs/AAPL.png";
 import { Grid } from "@mui/material";
 import './StockCard.css';
+import {CircularProgress} from "@mui/material";
+
 
 export default function StockCard(props) {
+  const [refreshing, setRefreshing] = useState(false);
   const cardInfo = props.cardInfo;
   const priceDirection = cardInfo.percentChange.includes("-") ? "-" : "+";
+
+  const refreshTicker = () => {
+    // setRefreshing(true);
+    props.onClick(cardInfo.ticker);
+  }
+
   return (
-        <Grid className="stock-card" item xs={6} md={6}>
-          <Card sx={{ width: 200, borderRadius: "1em" }}>
-            <CardMedia component="img" height="90" image={Image} alt="" />
-            <CardContent>
+        <Grid className="stock-card-grid" item>
+          <Card className="stock-card" sx={{ width: 200, borderRadius: "1em"}} onClick={refreshTicker} >
+            <CardMedia component="img" height="90" image={Fallback} alt="" />
+            {refreshing ? <CircularProgress /> : <CardContent>
               <Typography
                 gutterBottom
                 variant="h6"
@@ -31,9 +39,9 @@ export default function StockCard(props) {
               </Typography>
               {/* Edge case to consider soon: no price change -> black text */}
               <Typography variant="body1" color={priceDirection === "-" ? "red" : "green"}>
-                {priceDirection} ${cardInfo.priceChange} ({cardInfo.percentChange}%)
+                ${cardInfo.priceChange} ({cardInfo.percentChange}%)
               </Typography>
-            </CardContent>
+            </CardContent>}
             <CardActions>
               <Button size="small">Expand</Button>
             </CardActions>

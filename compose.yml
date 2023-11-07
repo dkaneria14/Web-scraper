@@ -1,0 +1,19 @@
+services:
+  server:
+    container_name: stockwatch-server
+    env_file: .env
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+     
+  client:
+    container_name: stockwatch-client
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

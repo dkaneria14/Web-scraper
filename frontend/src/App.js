@@ -11,6 +11,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useEffect, useState } from 'react';
 import { Route, Routes } from "react-router-dom";
 import { Grid } from "@mui/material";
+import apiEndpoint from './apiEndpoint';
+import { CircularProgress } from '@mui/material';
 
 
 function App() {
@@ -18,27 +20,40 @@ function App() {
   const [tempStockList, setTempStockList] = useState([]);
   const [searchStock, setSearchStock] = useState("");
   const [stockInfo, setStockInfo] = useState(null);
-  const [flag, setFlag] = useState(false);
+  const [stockInfoLoaded, setStockInfoLoaded] = useState(false);
   const [tickerList, setTickerList] = useState({});
   
-  const apiUrl = "http://127.0.0.1:8000/stockList/";
+  const tickerAPI = apiEndpoint + "/stockList/";
 
-  const tickerListURL = "http://127.0.0.1:8000/stocklistDB/";
+  const tickerListURL = apiEndpoint + "/stocklistDB/";
 
   useEffect(() => {
-    const items = JSON.parse(localStorage.getItem('stockList'));
-    if (items) {
-      setTempStockList(items);
-    }
     getTickers();
   }, [])
 
+  useEffect(() => {
+    const selectedTickers = JSON.parse(localStorage.getItem('stockList'));
+    if (selectedTickers) {
+      setTempStockList(selectedTickers);
+      let tickersInfo = {};
+      Promise.all(selectedTickers.map(ticker => 
+        axios.get(tickerAPI + ticker).then(response => {
+          tickersInfo[ticker] = response.data;
+        }).then((responses) => {
+          setStockInfo(Object.assign({}, stockInfo, tickersInfo));
+        })
+      )).then(() => setStockInfoLoaded(true))
+    }
+  }, [])
+
   const getStockData = (name) => {
-    axios.get(apiUrl + name)
+    axios.get(tickerAPI + name)
       .then((response) => {
-        if(response.data)
-        setStockInfo(response.data);
-      setFlag(true);
+        if(response.data) {
+          let temp = {...stockInfo};
+          temp[name] = response.data;
+          setStockInfo(temp);
+        }
       })
       .catch((error) => {
         // Handle any errors here
@@ -59,6 +74,10 @@ function App() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    // Avoid duplicates
+    if (!searchStock || tempStockList.includes(searchStock)) {
+      return;
+    }
     var temp = [...tempStockList];
     temp.push(searchStock);
     setTempStockList(temp);
@@ -68,33 +87,35 @@ function App() {
   }
 
   const handleDelete = (item) => {
+    const confirmed = window.confirm(`Confirm removing ${item} from selected stocks?`);
+    if (!confirmed) return;
     var temp = tempStockList.filter(x => x !== item);
-    console.log(temp);
     setTempStockList(temp);
     localStorage.setItem('stockList', JSON.stringify(temp));
   }
 
-  const handleClick = (x) => {
-    console.info('You clicked the Chip.');
-    // getStockData(x);
+  const refreshTicker = (ticker) => {
+    getStockData(ticker);
   };
 
-  // Mock Stock Card Data
-  const mockStockCardData = {
-    AAPL: {
-      name: "Apple Inc",
-      ticker: "AAPL",
-      price: "168.22",
-      priceChange: "0.54",
-      percentChange: "+1.19",
-    },
-    AMZN: {
-      name: "Amazon.com, Inc",
-      ticker: "AMZN",
-      price: "127.74",
-      priceChange: "1.33",
-      percentChange: "-0.82",
-    },
+  const searchBarSubmit = (e) => {
+    e.preventDefault();
+    if (tickerList[searchStock]) handleSubmit(e)
+  }
+
+  const generateStockCardInfo = (ticker) => {
+    if (!stockInfo[ticker]) return null
+    const { symbol, longName, currentPrice, previousClose } = stockInfo[ticker];
+    // If required properties are not available, do not generate card
+    if (!(symbol && longName && currentPrice && previousClose)) return null;
+    const curr = parseFloat(currentPrice).toFixed(2);
+    const prev = parseFloat(previousClose);
+    const priceChange = (curr - prev).toFixed(2).toString();
+    const percentChange = (((curr - prev) / Math.abs(prev)) * 100)
+      .toFixed(2)
+      .toString();
+    const cardInfo = { name: longName, ticker: symbol, price: curr, priceChange, percentChange};
+    return cardInfo;
   };
 
   return (
@@ -104,12 +125,13 @@ function App() {
         <Routes>{}</Routes>
       </div>
       <header className="App-header">
-        {<img src={logo} alt="Logo" width="400" />}
+        <img src={logo} alt="Logo" width="400" />
         <p>Watch Your Stock Around The Clock</p>
 
         {/* Search Bar */}
         <Paper
           component="form"
+          onSubmit={searchBarSubmit}
           sx={{
             p: "2px 20px",
             display: "flex",
@@ -165,7 +187,7 @@ function App() {
             <SearchIcon fontSize="large" />
           </IconButton>
         </Paper>
-        <Stack direction="row" spacing={1} margin="15px">
+        <Stack sx={{ width: "80%", flexWrap: "wrap"}} direction="row" spacing={1} rowGap={1} margin="15px" width="100%">
           {tempStockList.length > 0 ? (
             <Typography
               sx={{ mt: 3 }}
@@ -173,30 +195,31 @@ function App() {
               color="black"
               variant="h6"
             >
-              Selected Stocks:{" "}
+              Selected Stocks:
             </Typography>
           ) : null}
-          {tempStockList.map((x) => {
+          {tempStockList.map((ticker) => {
             return (
               <Chip
-                key={x}
-                label={x}
-                color="secondary"
-                onClick={handleClick(x)}
-                onDelete={(e) => handleDelete(x)}
+                key={ticker}
+                label={ticker}
+                color="primary"
+                onClick={() => refreshTicker(ticker)}
+                onDelete={(e) => handleDelete(ticker)}
               />
             );
           })}
         </Stack>
         {/* <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography> */}
-        <div>
-          <Grid alignItems="center" container spacing={2}>
-          {tempStockList.map((x) => {
-            console.log(x);
-            return (<StockCard cardInfo={mockStockCardData[x]}/>);
-          })}
+        <div style={{ overflow: "scroll", padding: "20px"}}>
+          <Grid sx={{ mb: 1}} justifyContent="center" alignItems="center" container item spacing={2} xs={12} md={12}>
+          {stockInfoLoaded && stockInfo && tempStockList.length > 0 ? tempStockList.map((ticker) => {
+            // Grab Stock Data - This should be refactored into its own function though.
+            const cardInfo = generateStockCardInfo(ticker);
+            return cardInfo ? <StockCard key={ticker} cardInfo={cardInfo} onClick={refreshTicker}/> : null
+          }) : tempStockList.length > 0 ? <CircularProgress sx={{ mt: 5}}/> : null}
           </Grid>
-        </div>
+          </div>
       </header>
     </div>
   );

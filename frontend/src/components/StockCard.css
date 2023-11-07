@@ -1,8 +1,13 @@
-.stock-card {
+.stock-card-grid {
     cursor: pointer;
     transition: all ease-in-out 0.5s;
+    height: 100%;
 }
 
-.stock-card:hover {
+.stock-card-grid:hover {
     transform: scale(1.10);
+}
+
+.stock-card {
+    height: 100%;
 }
