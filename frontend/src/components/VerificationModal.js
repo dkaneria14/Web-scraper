@@ -15,9 +15,10 @@ import StepLabel from '@mui/material/StepLabel';
 
 import { CircularProgress } from '@mui/material';
 import axios from "axios";
+import apiEndpoint from "../apiEndpoint";
 
 const steps = ['Send Verification Email', 'Confirm Email Code'];
-const emailEndpoint = "http://127.0.0.1:8000/email/";
+const emailEndpoint = apiEndpoint + "/email/";
 
 export default function AlertSignupModal(props) {
   const [open, setOpen] = useState(true);

@@ -11,7 +11,6 @@
   display: flex;
   padding: 10px 10px;
   height: "60px";
-  background: #cfdad2;
 }
 
 
@@ -35,6 +34,8 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: #0a0a0a;
+  overflow: hidden;
+  padding-top: 10%;
 }
 
 .App-link {

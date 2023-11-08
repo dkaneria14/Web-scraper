@@ -21,3 +21,6 @@ PASSWORD="gmailAppPassword"
 6. Start React front-end `npm run start` (for dev only, instructions will be replaced for prod and the whole stack containerized hopefully)
 7. Deactivate virtual env when done with `deactivate`
 
+# Changelog
+## Nov 7, 2023
+- Added containerization support. You can run the whole solution using `docker compose -f ./compose.yml up` from the root project directory.
