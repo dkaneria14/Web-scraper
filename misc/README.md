@@ -1,0 +1,1 @@
+This directory houses miscellaneous files not directly a part of the source code: such as the nginx configuration for the server or compose used to run the stack.

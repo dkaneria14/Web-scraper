@@ -12,8 +12,8 @@ import { useEffect, useState } from 'react';
 import { Route, Routes } from "react-router-dom";
 import { Grid } from "@mui/material";
 import apiEndpoint from './apiEndpoint';
-import { CircularProgress } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { CircularProgress } from '@mui/material';
 
 const theme = createTheme({
   typography: {
@@ -31,30 +31,39 @@ function App() {
  
   const [tempStockList, setTempStockList] = useState([]);
   const [searchStock, setSearchStock] = useState("");
-  const [stockInfo, setStockInfo] = useState(null);
+  const [stockInfo, setStockInfo] = useState({});
   const [stockInfoLoaded, setStockInfoLoaded] = useState(false);
   const [tickerList, setTickerList] = useState({});
   
   const tickerAPI = apiEndpoint + "/stockList/";
 
   const tickerListURL = apiEndpoint + "/stocklistDB/";
-
+  
   useEffect(() => {
     getTickers();
-  }, [])
-
-  useEffect(() => {
     const selectedTickers = JSON.parse(localStorage.getItem('stockList'));
     if (selectedTickers) {
+      setStockInfoLoaded(false);
       setTempStockList(selectedTickers);
       let tickersInfo = {};
+      const dataNotFound = [];
       Promise.all(selectedTickers.map(ticker => 
         axios.get(tickerAPI + ticker).then(response => {
+          const cardInfo = generateStockCardInfo(response.data);
+          if (!cardInfo) {
+            return dataNotFound.push(ticker);
+          }
           tickersInfo[ticker] = response.data;
-        }).then((responses) => {
+          tickersInfo[ticker].cardInfo = cardInfo;
+        }).then(() => {
           setStockInfo(Object.assign({}, stockInfo, tickersInfo));
+          // Show one stock card and async load remaining stocks so user does not assume indefinite loading for large list of tickers
+          setStockInfoLoaded(true);
         })
-      )).then(() => setStockInfoLoaded(true))
+      )).then(() => {
+        if (dataNotFound.length > 0)
+          alert(`Data could not be retrieved for the following symbols: ${dataNotFound}. If this is persistent, we recommend removing them from your list.`)
+      })
     }
   }, [])
 
@@ -62,11 +71,17 @@ function App() {
     axios.get(tickerAPI + name)
       .then((response) => {
         if(response.data) {
-          let temp = {...stockInfo};
-          temp[name] = response.data;
-          setStockInfo(temp);
+          // Stock Card info should be generated when new data fetched rather than running calculations on every render
+          const cardInfo = generateStockCardInfo(response.data);
+          if (!cardInfo) {
+            return window.alert(`Not enough data found for symbol: ${name}. We suggest that you remove it. If this is incorrect, please try again.`);
+          }
+          setStockInfo(prevStockInfo => {
+            prevStockInfo[name] = {...response.data, cardInfo};
+            return {...prevStockInfo};
+          });
         }
-      })
+      }).then(() => {if (!stockInfoLoaded) setStockInfoLoaded(true);})
       .catch((error) => {
         // Handle any errors here
         console.error('Error fetching data:', error);
@@ -86,8 +101,11 @@ function App() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Avoid duplicates
-    if (!searchStock || tempStockList.includes(searchStock)) {
+    // Avoid nonexistent tickers
+    if (!searchStock || !tickerList[searchStock]) return;
+    // Avoid duplicate tickers/show user existing ticker
+    if (tempStockList.includes(searchStock)) {
+      // Ideally here, if the stockcard already exists - scroll to it.
       return;
     }
     var temp = [...tempStockList];
@@ -101,12 +119,21 @@ function App() {
   const handleDelete = (item) => {
     const confirmed = window.confirm(`Confirm removing ${item} from selected stocks?`);
     if (!confirmed) return;
-    var temp = tempStockList.filter(x => x !== item);
+    deleteTicker(item);
+  }
+
+  const deleteTicker = (ticker) => {
+    let temp = tempStockList.filter(x => x !== ticker);
     setTempStockList(temp);
     localStorage.setItem('stockList', JSON.stringify(temp));
   }
 
   const refreshTicker = (ticker) => {
+    // Avoid race condition
+    setStockInfo(prevStockInfo => {
+      prevStockInfo[ticker].cardInfo.refreshing = true;
+      return {...prevStockInfo}
+    });
     getStockData(ticker);
   };
 
@@ -115,9 +142,9 @@ function App() {
     if (tickerList[searchStock]) handleSubmit(e)
   }
 
-  const generateStockCardInfo = (ticker) => {
-    if (!stockInfo[ticker]) return null
-    const { symbol, shortName, currentPrice, previousClose } = stockInfo[ticker];
+  const generateStockCardInfo = (stockInfo) => {
+    if (!stockInfo) return null
+    const { symbol, shortName, currentPrice, previousClose } = stockInfo;
     // If required properties are not available, do not generate card
     if (!(symbol && shortName && currentPrice && previousClose)) return null;
     const curr = parseFloat(currentPrice).toFixed(2);
@@ -126,7 +153,7 @@ function App() {
     const percentChange = (((curr - prev) / Math.abs(prev)) * 100)
       .toFixed(2)
       .toString();
-    const cardInfo = { name: shortName, ticker: symbol, price: curr, priceChange, percentChange};
+    const cardInfo = { name: shortName, ticker: symbol, price: curr, priceChange, percentChange, refreshing: false};
     return cardInfo;
   };
 
@@ -223,14 +250,14 @@ function App() {
             );
           })}
         </Stack>
-        {/* <Typography sx={{ mt: 3 }} align='center' color='black' variant="h6">The text below will display the API response in json format.</Typography> */}
         <div style={{ overflowY: "scroll", padding: "20px"}}>
           <Grid sx={{ mb: 1}} justifyContent="center" alignItems="center" container item spacing={2} xs={12} md={12}>
           {stockInfoLoaded && stockInfo && tempStockList.length > 0 ? tempStockList.map((ticker) => {
-            // Grab Stock Data - This should be refactored into its own function though.
-            const cardInfo = generateStockCardInfo(ticker);
-            return cardInfo ? <StockCard key={ticker} cardInfo={cardInfo} onClick={refreshTicker}/> : null
-          }) : tempStockList.length > 0 ? <CircularProgress sx={{ mt: 5}}/> : null}
+            const stockData = stockInfo[ticker];
+            if (!(stockData)) return;
+            if (!('cardInfo' in stockData)) return;
+            return <StockCard key={ticker} cardInfo={stockData.cardInfo} onClick={refreshTicker}/>
+          }): tempStockList.length > 0 && !stockInfoLoaded ? <CircularProgress sx={{ mt: 5}}/> : null}
           </Grid>
           </div>
       </header>

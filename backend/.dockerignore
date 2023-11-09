@@ -6,3 +6,5 @@ Dockerfile.prod
 .git
 .DS_Store
 .env
+venv/
+_pycache_
