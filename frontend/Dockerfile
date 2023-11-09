@@ -5,6 +5,7 @@ COPY package.json *.json *.js ./
 RUN npm i
 COPY ./src ./src
 COPY ./public ./public
+COPY .env-remote-container .env
 RUN npm run build
 
 # Serve Static React Pages

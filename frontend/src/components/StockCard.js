@@ -1,4 +1,3 @@
-import {useState } from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -12,20 +11,23 @@ import {CircularProgress} from "@mui/material";
 
 
 export default function StockCard(props) {
-  const [refreshing, setRefreshing] = useState(false);
   const cardInfo = props.cardInfo;
-  const priceDirection = cardInfo.percentChange.includes("-") ? "-" : "+";
+  let priceDirection;
+  if (!cardInfo.refreshing) {
+    priceDirection = cardInfo.percentChange.includes("-") ? "-" : "+"
+  }
+  
+  
 
   const refreshTicker = () => {
-    // setRefreshing(true);
     props.onClick(cardInfo.ticker);
   }
 
   return (
         <Grid className="stock-card-grid" item>
-          <Card className="stock-card" sx={{ width: 200, borderRadius: "1em"}} onClick={refreshTicker} >
-            <CardMedia component="img" height="90" image={Fallback} alt="" />
-            {refreshing ? <CircularProgress /> : <CardContent>
+          <Card className="stock-card" sx={{ width: 200, borderRadius: "1em"}} >
+            <CardMedia component="img" height="90" image={Fallback} alt=""  onClick={refreshTicker}/>
+            {cardInfo.refreshing ? <CircularProgress sx={{m: 3}} /> : <CardContent onClick={refreshTicker}>
               <Typography
                 sx={{
                   overflow: "hidden",
