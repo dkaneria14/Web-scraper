@@ -7,54 +7,70 @@ import Typography from "@mui/material/Typography";
 import Fallback from "../assets/stockGraphs/AAPL.png";
 import { Grid } from "@mui/material";
 import './StockCard.css';
-import {CircularProgress} from "@mui/material";
-
+import { CircularProgress } from "@mui/material";
+import StockDialog from "./StockDialog";
+import { useState } from "react";
 
 export default function StockCard(props) {
-  const cardInfo = props.cardInfo;
+
+  const { cardInfo, onClick} = props;
+
+  // Dialog states 
+  const [open, setOpen] = useState(false);
+  // const [dialogStock, setDialogStock] = useState({});
+
   let priceDirection;
   if (!cardInfo.refreshing) {
     priceDirection = cardInfo.percentChange.includes("-") ? "-" : "+"
   }
-  
-  
+
+
+  const handleStockDialog = () => {
+    // setting stock info for that respective dialog box, then open dialog with setOpen = true 
+    setOpen(true);
+  }
 
   const refreshTicker = () => {
-    props.onClick(cardInfo.ticker);
+    onClick(cardInfo.ticker);
   }
 
   return (
-        <Grid className="stock-card-grid" item>
-          <Card className="stock-card" sx={{ width: 200, borderRadius: "1em"}} >
-            <CardMedia component="img" height="90" image={Fallback} alt=""  onClick={refreshTicker}/>
-            {cardInfo.refreshing ? <CircularProgress sx={{m: 3}} /> : <CardContent onClick={refreshTicker}>
-              <Typography
-                sx={{
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "2",
-                  WebkitBoxOrient: "vertical",
-                }}
-                gutterBottom
-                variant="h6"
-                component="div"
-                color="gray"
-              >
-                {cardInfo.name}
-              </Typography>
-              <Typography variant="h5" color="black">
-                {cardInfo.ticker} ${cardInfo.price}
-              </Typography>
-              {/* Edge case to consider soon: no price change -> black text */}
-              <Typography variant="body1" color={priceDirection === "-" ? "red" : "green"}>
-                ${cardInfo.priceChange} ({cardInfo.percentChange}%)
-              </Typography>
-            </CardContent>}
-            <CardActions>
-              <Button size="small">Expand</Button>
-            </CardActions>
-          </Card>
-        </Grid>
+    <Grid className="stock-card-grid" item>
+      <Card className="stock-card" sx={{ width: 200, borderRadius: "1em" }} >
+        <CardMedia component="img" height="90" image={Fallback} alt="" onClick={refreshTicker} />
+        {cardInfo.refreshing ? <CircularProgress sx={{ m: 3 }} /> : <CardContent onClick={refreshTicker}>
+          <Typography
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: "2",
+              WebkitBoxOrient: "vertical",
+            }}
+            gutterBottom
+            variant="h6"
+            component="div"
+            color="gray"
+          >
+            {cardInfo.name}
+          </Typography>
+          <Typography variant="h5" color="black">
+            {cardInfo.ticker} ${cardInfo.price}
+          </Typography>
+          {/* Edge case to consider soon: no price change -> black text */}
+          <Typography variant="body1" color={priceDirection === "-" ? "red" : "green"}>
+            ${cardInfo.priceChange} ({cardInfo.percentChange}%)
+          </Typography>
+        </CardContent>}
+        <CardActions>
+          <Button size="small" onClick={handleStockDialog}>Expand</Button>
+        </CardActions>
+      </Card>
+      <StockDialog open={open} setOpen={setOpen} />
+      {/* {
+        console.log(cardInfo)
+      } */}
+
+    </Grid>
   );
 }
