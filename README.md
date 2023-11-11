@@ -24,3 +24,4 @@ PASSWORD="gmailAppPassword"
 # Changelog
 ## Nov 7, 2023
 - Added containerization support. You can run the whole solution using `docker compose -f ./compose.yml up` from the root project directory. To rebuild containers `docker compose -f ./compose.yml build`. To specify a https server endpoint other than `127.0.0.1` for the container, before building, run `export RASP=stockwatch.cloud` where `stockwatch-cloud` is the desired endpoint. For Windows, replace `export` with `set`.
+- `rundev.sh` - Run the development server/react front end in one command from the root project directory (Unix-based os dependent).

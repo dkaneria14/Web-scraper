@@ -52,7 +52,7 @@ export default function StockCard(props) {
             component="div"
             color="gray"
           >
-            {cardInfo.name}
+            {cardInfo.name}<br/><br/>
           </Typography>
           <Typography variant="h5" color="black">
             {cardInfo.ticker} ${cardInfo.price}
