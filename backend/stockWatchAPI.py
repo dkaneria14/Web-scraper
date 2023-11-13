@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from database.database import DataBase
 from api import email
 from datetime import datetime
-import datetime
 import json
 import pytz
 import uvicorn
@@ -71,7 +70,7 @@ def filter(stockName: str):
 
 def update_stock_prices():
     
-    print(f"Updating stock prices at {datatime.now()}")
+    print(f"Updating stock prices at {datetime.now()}")
     stock_tickers = ["AAPL", "GOOG", "MSFT"]  
 
     for ticker in stock_tickers:
