@@ -10,31 +10,35 @@ import apiEndpoint from "./apiEndpoint";
 
 const noStockError = "Error - Please select some stocks below first.";
 const emailVerifiedError = "Your email is not yet verified. Please follow verification instructions.";
-const emailVerified = "Your email is verified, you may now schedule alerts and thresholds for your stocks";
+const emailVerified = "Your email is verified, you may now schedule alerts and thresholds for your stocks.";
+
+const userMessages = {
+  noStockError: {msg: noStockError, type: "error"},
+  emailVerifiedError: {msg: emailVerifiedError, type: "error"},
+  emailVerified: {msg: emailVerified},
+}
 
 export default function Navbar(props) {
 
-  const [showStockError, showError] = useState(false);
-  const [errorMessage, setErrorMsg] = useState(noStockError);
+  const [showUserAlerts, showAlert] = useState(false);
+  const [userMessage, setUserMsg] = useState(userMessages.noStockError);
   const [verify, setVerify] = useState(false);
   const [signUpEmail, setEmail] = useState("");
   const verificationEndpoint =  apiEndpoint + "/email/verified/";
 
   const signUp = (event) => {
     event.preventDefault();
-    if (props.selectedStocks.length === 0) return showError(true);
+    if (props.selectedStocks.length === 0) return showAlert(true);
     // Otherwise check if email is verified or not before proceeding to Modal
-    console.log(verificationEndpoint + signUpEmail);
     axios.get(verificationEndpoint + signUpEmail)
       .then((response) => {
         if(response.data) {
-          setErrorMsg(emailVerified);
-          showError(true);
+          setUserMsg(userMessages.emailVerified);
         } else {
-          setErrorMsg(emailVerifiedError);
-          showError(true);
+          setUserMsg(userMessages.emailVerifiedError);
           setVerify(true);
         }
+        showAlert(true);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -42,11 +46,18 @@ export default function Navbar(props) {
   }
 
   const handleClose = () => {
-    showError(false);
+    showAlert(false);
+  }
+
+  const alertUser = (message, type = null) => {
+    let alert = {msg: message};
+    if (type) alert.type = type;
+    setUserMsg(alert);
+    showAlert(true);
   }
   
   const createVerifyModal = () => {
-    return <VerificationModal setVerify={setVerify} email={signUpEmail}></VerificationModal>;
+    return <VerificationModal alertUser={alertUser} setVerify={setVerify} email={signUpEmail}></VerificationModal>;
   };
 
   return (
@@ -81,8 +92,8 @@ export default function Navbar(props) {
           SignUp
         </Button>
       </Paper>
-      <Snackbar open={showStockError} autoHideDuration={1500} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-        <Alert onClose={handleClose} severity={errorMessage === emailVerified ? "success" : "error"} sx={{ width: "100%" }}>{errorMessage}</Alert>
+      <Snackbar open={showUserAlerts} autoHideDuration={1500} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <Alert onClose={handleClose} severity={userMessage['type'] ? userMessage['type'] : "success"} sx={{ width: "100%" }}>{userMessage.msg}</Alert>
       </Snackbar>
       {verify ? createVerifyModal() : null}
     </div>

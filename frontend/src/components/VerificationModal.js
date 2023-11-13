@@ -19,14 +19,16 @@ import apiEndpoint from "../apiEndpoint";
 
 const steps = ['Send Verification Email', 'Confirm Email Code'];
 const emailEndpoint = apiEndpoint + "/email/";
+const incorrectCode = "The code you entered was incorrect. Please enter the correct code or request a new one.";
 
 export default function AlertSignupModal(props) {
-  const [open, setOpen] = useState(true);
   const [verificationCode, setVerificationCode] = useState('');
   const [sendingCode, setSendingCode] = useState(false);
 
+  const { setVerify, alertUser } = props;
+
   const handleClose = () => {
-    props.setVerify(false);
+    setVerify(false);
   }
 
   const [activeStep, setActiveStep] = useState(0);
@@ -73,7 +75,7 @@ export default function AlertSignupModal(props) {
     axios.post(`${emailEndpoint}send_code/`,{
       email: props.email
     }).then((response) => {
-      console.log(response)
+      alertUser(response.data);
     })
     .catch((error) => {
       console.error('Error fetching data:', error);
@@ -88,8 +90,9 @@ export default function AlertSignupModal(props) {
       email: props.email,
       code: verificationCode
     }).then((response) => {
-      console.log(response)
       setSendingCode(false);
+      if (!response.data) return alertUser(incorrectCode, "error");
+      alertUser(response.data);
       handleClose();
     })
     .catch((error) => {
@@ -117,7 +120,7 @@ export default function AlertSignupModal(props) {
   }
 
   return (
-    <Dialog open={open}>
+    <Dialog open={true}>
       <DialogTitle>Verify your Email</DialogTitle>
       <DialogContent>
         <Stepper activeStep={activeStep}>
