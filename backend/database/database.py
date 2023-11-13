@@ -1,4 +1,5 @@
 import pymongo 
+import certifi
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime, timedelta
@@ -8,7 +9,7 @@ class DataBase:
     def __init__(self):
         uri = "mongodb+srv://stock-admin:secure_pass123@cluster0.csya3y9.mongodb.net/?retryWrites=true&w=majority"
         # Create a new client and connect to the server
-        client = MongoClient(uri, server_api=ServerApi('1'))
+        client = MongoClient(uri, server_api=ServerApi('1'),tlsCAFile=certifi.where())
         DataBase.DB = client["StockDataBase"]
         self.collection = DataBase.DB["StockNames"]
 
