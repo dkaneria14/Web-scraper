@@ -2,11 +2,13 @@ from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from database.database import DataBase
 from api import email
+from datetime import datetime
 import datetime
 import json
 import pytz
 import uvicorn
 import yfinance as yf
+
 from yFinanceTempFix.yfFix import YFinance
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -28,6 +30,7 @@ origins = [
     "https://www.stockwatch.cloud"
 ]
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -44,9 +47,6 @@ async def startup_event():
 
 @app.get("/stockList/{stockName}")
 def get_stock_info(stockName: str):
-    # Using mock data for testing
-    # mock = json.loads('{"address1":"345 Park Avenue", ... (your mock data here)')
-    # return mock
     stock = YFinance(stockName)
     return stock.info
 
@@ -70,13 +70,13 @@ def filter(stockName: str):
     return my_json
 
 def update_stock_prices():
-    stock_tickers = ["AAPL", "GOOGL", "MSFT"]  
+    
+    print(f"Updating stock prices at {datatime.now()}")
+    stock_tickers = ["AAPL", "GOOG", "MSFT"]  
 
     for ticker in stock_tickers:
         yfinance_instance = YFinance(ticker)
         stock_info = yfinance_instance.info
-
-        # Perform database operations with stock_info
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
