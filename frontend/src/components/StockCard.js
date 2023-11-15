@@ -13,7 +13,8 @@ import { useState } from "react";
 
 export default function StockCard(props) {
 
-  const { cardInfo, onClick} = props;
+  const { onClick } = props;
+  const { cardInfo, ...stockInfo } = props.stockData;
 
   // Dialog states 
   const [open, setOpen] = useState(false);
@@ -66,7 +67,8 @@ export default function StockCard(props) {
           <Button size="small" onClick={handleStockDialog}>Expand</Button>
         </CardActions>
       </Card>
-      <StockDialog open={open} setOpen={setOpen} />
+      {/* Only render on expand*/}
+      {open ? <StockDialog open={open} setOpen={setOpen} stockInfo={stockInfo} /> : null}
       {/* {
         console.log(cardInfo)
       } */}
