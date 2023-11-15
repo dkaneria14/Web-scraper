@@ -4,6 +4,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogConten
 const StockDialog = (props) => {
 
     const { open, setOpen } = props;
+    const { shortName, symbol, ...remainingStockInfo } = props.stockInfo;
 
     // Close Dialog
     const handleClose = () => {
@@ -14,18 +15,32 @@ const StockDialog = (props) => {
 
     // Save button Function
 
+    const convertToPascalCaseSpaced = (camelCase) => {
+        const spacedString = camelCase.replace(/([A-Z])/g, ' $1');
+        return `${spacedString.charAt(0).toUpperCase()}${spacedString.slice(1)}`;
+    }
 
     return (
         <Dialog
             open={open}
             onClose={handleClose}
         >
-            <DialogTitle> Dialog Title Text
+            <DialogTitle> {shortName} - {symbol}
             </DialogTitle>
             <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    Any content info will be diaplayed here.
-                </DialogContentText>
+          {/* Placeholder content - flat objects */}
+          {Object.keys(remainingStockInfo).map((infoKey) => {
+            const info = remainingStockInfo[infoKey];
+            return !(typeof info === "object" && info !== null) ? (
+              <DialogContentText key={`${symbol}-${infoKey}`}>
+                <b style={{ color: "rgb(17, 0, 107)" }}>
+                  {convertToPascalCaseSpaced(infoKey)}:
+                </b>{" "}
+                {remainingStockInfo[infoKey]}
+                <br />
+              </DialogContentText>
+            ) : null;
+          })}
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} autoFocus>

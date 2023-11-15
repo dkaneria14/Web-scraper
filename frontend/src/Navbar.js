@@ -62,7 +62,7 @@ export default function Navbar(props) {
 
   return (
     <div className="nav">
-      <img src={logo1} alt="Logo" width="60" height="60" style={{ marginLeft: 10 }} />
+      <a href=""><img className="stockwatch-logo" src={logo1} alt="Logo" width="60" height="60" style={{ marginLeft: 10 }} /></a>
       <Paper
         component="form"
         sx={{

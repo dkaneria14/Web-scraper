@@ -1,3 +1,4 @@
+# Compose being used on server hosting containers
 services:
   server:
     image: ismailmohammad/stockwatch:server
@@ -6,18 +7,19 @@ services:
     ports:
       - "8000:8000"
     restart: always
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
      
   client:
     image: ismailmohammad/stockwatch:client
     container_name: stockwatch-client
+    volumes:
+      - ./stockwatch/nginx:/etc/nginx/conf.d
+      - ./stockwatch/certbot/conf:/etc/letsencrypt
+      - ./stockwatch/certbot/www:/var/www/certbot
     ports:
       - "80:80"
       - "443:443"
+      - "8001:8001"
     restart: always
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
   certbot:
     image: certbot/certbot
