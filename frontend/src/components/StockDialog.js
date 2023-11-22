@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText} from "@mui/material";
+import {Threshold} from './threshold'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 
 const StockDialog = (props) => {
 
@@ -89,6 +90,7 @@ const StockDialog = (props) => {
               </span>
               </ul> 
             </DialogContent>
+            <Threshold />
             <DialogActions>
                 <Button onClick={handleClose} autoFocus>
                     Close
