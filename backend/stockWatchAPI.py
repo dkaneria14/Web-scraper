@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database.database import DataBase
+from database.database import DataBase,User,Stock
 from api import email
 import datetime
 import pytz
@@ -33,6 +33,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.post("/insertList")
+async def insert_user(user:User):
+    obj = DataBase()
+    #Convert to dict
+    jsonUser = user.model_dump()
+    obj.insert_user_data(jsonUser)
+    print(jsonUser)
+    return jsonUser
+
 
 @app.get("/stockList/{stockName}")
 

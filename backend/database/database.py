@@ -2,6 +2,18 @@ import pymongo
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime, timedelta
+from pydantic import BaseModel
+
+
+class Stock(BaseModel):
+    name:str
+    threshold:float
+    isAbove:bool
+    date:str
+
+class User(BaseModel):
+    email: str
+    stock:Stock
 
 class DataBase:
     DB = None
@@ -45,3 +57,6 @@ class DataBase:
                 return True
         return False
 
+    def insert_user_data(self,user:User):
+        self.collection = DataBase.DB["UserInformation"]
+        return self.collection.insert_one(user)
