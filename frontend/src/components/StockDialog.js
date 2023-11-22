@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Grid, Card, CardContent } from "@mui/material";
 
 const StockDialog = (props) => {
   const { open, setOpen } = props;
@@ -35,58 +35,36 @@ const StockDialog = (props) => {
     }
   };
 
+  const stockDialogInfo = (title, value) => {
+    return (
+    <Grid item xs={6}>
+      <Card sx={{ borderRadius: "1em", height: "100%" }} >
+        <CardContent >
+          <Typography variant='p' color='rgb(17, 0, 107)' fontWeight="bold">{title}</Typography>
+          <Typography variant='body1'>{value}</Typography>
+        </CardContent>
+      </Card>
+      </Grid>);
+  }
+
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle style={{ fontSize: "1.8rem", display: "flex", justifyContent: "center", marginBottom: "10px" }}>
+      <DialogTitle style={{ fontSize: "1.8rem", display: "flex", justifyContent: "center", backgroundColor: "#f1f1f1" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <span style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{shortName} - {symbol}</span>
         </div>
       </DialogTitle>
-      <DialogContent>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <tbody>
-            <tr style={{ borderBottom: "1px solid #ddd" }}>
-              <th style={{ color: "rgb(17, 0, 107)", padding: "8px" }}>Current Price:</th>
-              <td style={{ padding: "8px" }}>
-                <span className="font-bold">{currentPrice} USD</span>
-              </td>
-            </tr>
-            <tr style={{ borderBottom: "1px solid #ddd" }}>
-              <th style={{ color: "rgb(17, 0, 107)", padding: "8px" }}>High/Low:</th>
-              <td style={{ padding: "8px" }}>
-                <span className="font-bold">
-                  {dayHigh}/{dayLow.toFixed(2)}
-                </span>
-              </td>
-            </tr>
-            <tr style={{ borderBottom: "1px solid #ddd" }}>
-              <th style={{ color: "rgb(17, 0, 107)", padding: "8px" }}>Market Capitalization:</th>
-              <td style={{ padding: "8px" }}>
-                <span className="font-bold">{`${convertToBillion(marketCap)}`}</span>
-              </td>
-            </tr>
-            <tr style={{ borderBottom: "1px solid #ddd" }}>
-              <th style={{ color: "rgb(17, 0, 107)", padding: "8px" }}>Total Revenue:</th>
-              <td style={{ padding: "8px" }}>
-                <span className="font-bold">{`${convertToBillion(totalRevenue)}`}</span>
-              </td>
-            </tr>
-            <tr style={{ borderBottom: "1px solid #ddd" }}>
-              <th style={{ color: "rgb(17, 0, 107)", padding: "8px" }}>Float Shares:</th>
-              <td style={{ padding: "8px" }}>
-                <span className="font-bold">{`${convertToBillion(floatShares)}`}</span>
-              </td>
-            </tr>
-            <tr style={{ borderBottom: "1px solid #ddd" }}>
-              <th style={{ color: "rgb(17, 0, 107)", padding: "8px" }}>Price to Earnings Ratio:</th>
-              <td style={{ padding: "8px" }}>
-                <span className="font-bold">{peRatio}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <DialogContent sx={{ backgroundColor: "#f1f1f1" }}>
+      <Grid container spacing={1} justifyContent='center' alignContent='center'>
+        {stockDialogInfo("Current Price:", `${currentPrice} USD`)}
+        {stockDialogInfo("High/Low:", `${dayHigh}/${dayLow.toFixed(2)}`)}
+        {stockDialogInfo("Market Capitalization:", convertToBillion(marketCap))}
+        {stockDialogInfo("Total Revenue:", convertToBillion(totalRevenue))}
+        {stockDialogInfo("Float Shares:", convertToBillion(floatShares))}
+        {stockDialogInfo("Price to Earnings Ratio:", peRatio)}
+      </Grid>
       </DialogContent>
-      <DialogActions style={{ justifyContent: "space-between", padding: "16px" }}>
+      <DialogActions style={{ justifyContent: "space-between", padding: "16px", backgroundColor: "#f1f1f1" }}>
         <span style={{ fontSize: "0.8rem", color: "rgb(128, 128, 128)" }}>
           Date: {day} {month}
         </span>
