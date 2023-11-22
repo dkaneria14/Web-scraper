@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database.database import DataBase,User,Stock
+from database.database import DataBase,User,Stock, EmailRequest
 from api import email
 import datetime
 import pytz
@@ -44,6 +44,11 @@ async def insert_user(user:User):
     print(jsonUser)
     return jsonUser
 
+@app.get("/getUserSetStockValues")
+async def get_stock_threshold_values(emailrequest : EmailRequest):
+    obj = DataBase()
+    email = emailrequest.email
+    return obj.get_user_data(email)
 
 @app.get("/stockList/{stockName}")
 
