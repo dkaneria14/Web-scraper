@@ -1,4 +1,5 @@
 import React from "react";
+import {Threshold} from './threshold'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Grid, Card, CardContent } from "@mui/material";
 
 const StockDialog = (props) => {
@@ -37,6 +38,7 @@ const StockDialog = (props) => {
 
   const stockDialogInfo = (title, value) => {
     return (
+
     <Grid item xs={6}>
       <Card sx={{ borderRadius: "1em", height: "100%" }} >
         <CardContent >
@@ -56,7 +58,7 @@ const StockDialog = (props) => {
       </DialogTitle>
       <DialogContent sx={{ backgroundColor: "#f1f1f1" }}>
       <Grid container spacing={1} justifyContent='center' alignContent='center'>
-        {stockDialogInfo("Current Price:", `${currentPrice} USD`)}
+        {stockDialogInfo("Current Price:", `${currentPrice} ${currency}`)}
         {stockDialogInfo("High/Low:", `${dayHigh}/${dayLow.toFixed(2)}`)}
         {stockDialogInfo("Market Capitalization:", convertToBillion(marketCap))}
         {stockDialogInfo("Total Revenue:", convertToBillion(totalRevenue))}
@@ -64,12 +66,16 @@ const StockDialog = (props) => {
         {stockDialogInfo("Price to Earnings Ratio:", peRatio)}
       </Grid>
       </DialogContent>
+      <Threshold  style={{backgroundColor: "#f1f1f1" }}/>
       <DialogActions style={{ justifyContent: "space-between", padding: "16px", backgroundColor: "#f1f1f1" }}>
         <span style={{ fontSize: "0.8rem", color: "rgb(128, 128, 128)" }}>
           Date: {day} {month}
         </span>
-        <Button onClick={handleClose} autoFocus>
+        <Button onClick={handleClose} style={{marginLeft:"300px"}} autoFocus>
           Close
+        </Button>
+        <Button variant="contained" type="submit">
+                Save
         </Button>
       </DialogActions>
     </Dialog>
