@@ -1,6 +1,6 @@
 from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from database.database import DataBase,User,Stock, EmailRequest
+from database.database import DataBase,User, EmailRequest
 from api import email
 from datetime import datetime
 import json
@@ -48,11 +48,8 @@ async def startup_event():
 @app.post("/insertList")
 async def insert_user(user:User):
     obj = DataBase()
-    #Convert to dict
-    jsonUser = user.model_dump()
-    obj.insert_user_data(jsonUser)
-    print(jsonUser)
-    return jsonUser
+    obj.insert_user_data(user)
+
 
 @app.get("/getUserSetStockValues")
 async def get_stock_threshold_values(emailrequest : EmailRequest):

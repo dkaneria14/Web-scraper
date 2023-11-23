@@ -14,8 +14,9 @@ class Stock(BaseModel):
 
 class User(BaseModel):
     email: str
-    stock:Stock
-    
+    stockList:list[Stock]
+        
+
 class EmailRequest(BaseModel):
     email: str
 
@@ -64,7 +65,17 @@ class DataBase:
 
     def insert_user_data(self,user:User):
         self.collection = DataBase.DB["UserInformation"]
-        return self.collection.insert_one(user)
+        query = {"email": user.email}
+        user_data = self.collection.find_one(query)
+
+
+
+        if user_data:
+            new_stock_list = { "$push": { 'stockList':  user.stockList[0].model_dump()} }
+            self.collection.update_one(query, new_stock_list)
+        else:
+            self.collection.insert_one(user.model_dump())
+     
     
     def get_user_data(self, email: str):
         self.collection = DataBase.DB["UserInformation"]
