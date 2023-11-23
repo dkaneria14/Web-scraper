@@ -2,6 +2,22 @@ import pymongo
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime, timedelta
+from pydantic import BaseModel
+
+
+class Stock(BaseModel):
+    name:str
+    threshold:float
+    isAbove:bool
+    date:str
+
+class User(BaseModel):
+    email: str
+    stock:Stock
+    
+class EmailRequest(BaseModel):
+    email: str
+
 
 class DataBase:
     DB = None
@@ -45,3 +61,17 @@ class DataBase:
                 return True
         return False
 
+    def insert_user_data(self,user:User):
+        self.collection = DataBase.DB["UserInformation"]
+        return self.collection.insert_one(user)
+    
+    def get_user_data(self, email: str):
+        self.collection = DataBase.DB["UserInformation"]
+        query = {"email": email}
+        user_data = self.collection.find_one(query)
+
+        # Convert ObjectId to string
+        if user_data and "_id" in user_data:
+            user_data["_id"] = str(user_data["_id"])
+
+        return user_data
