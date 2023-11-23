@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { Stack, TextField, Button, InputAdornment, FormGroup, FormControlLabel, Switch, Typography  } from '@mui/material';
+import { Stack, TextField, Button, InputAdornment, FormGroup, FormControlLabel, Switch } from '@mui/material';
 
-export function Threshold() {
+export function Threshold(props) {
+    const { style } = props;
+
     return (
-        <Stack direction="row" spacing={2} padding={3} margin={1}>
+        <Stack direction="row" spacing={2} padding={3} style={style} justifyContent="left">
             <TextField
                 id="filled-number"
                 label="Enter Threshold Value"
@@ -15,9 +17,9 @@ export function Threshold() {
             <FormGroup>
                 <FormControlLabel control={<Switch defaultChecked />} label="Above" />
             </FormGroup>
-            <Button variant="contained" type="submit">
+            <Button variant="contained" type="submit" sx={{ height: '35px' }}>
                 add
-              </Button>
+            </Button>
         </Stack>
 
     );

@@ -1,10 +1,6 @@
 import React from "react";
-<<<<<<< HEAD
 import {Threshold} from './threshold'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-=======
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Grid, Card, CardContent } from "@mui/material";
->>>>>>> 421a6f46874a96d6fab07c93d640983932975ec0
 
 const StockDialog = (props) => {
   const { open, setOpen } = props;
@@ -43,7 +39,6 @@ const StockDialog = (props) => {
   const stockDialogInfo = (title, value) => {
     return (
 
-=======
     <Grid item xs={6}>
       <Card sx={{ borderRadius: "1em", height: "100%" }} >
         <CardContent >
@@ -53,7 +48,6 @@ const StockDialog = (props) => {
       </Card>
       </Grid>);
   }
->>>>>>> 421a6f46874a96d6fab07c93d640983932975ec0
 
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -72,13 +66,16 @@ const StockDialog = (props) => {
         {stockDialogInfo("Price to Earnings Ratio:", peRatio)}
       </Grid>
       </DialogContent>
-      <Threshold />
+      <Threshold  style={{backgroundColor: "#f1f1f1" }}/>
       <DialogActions style={{ justifyContent: "space-between", padding: "16px", backgroundColor: "#f1f1f1" }}>
         <span style={{ fontSize: "0.8rem", color: "rgb(128, 128, 128)" }}>
           Date: {day} {month}
         </span>
-        <Button onClick={handleClose} autoFocus>
+        <Button onClick={handleClose} style={{marginLeft:"300px"}} autoFocus>
           Close
+        </Button>
+        <Button variant="contained" type="submit">
+                Save
         </Button>
       </DialogActions>
     </Dialog>
