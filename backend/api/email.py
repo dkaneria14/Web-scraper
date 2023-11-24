@@ -29,8 +29,7 @@ async def send_code(emailData: EmailAddress):
     subject = "StockWatch Verification Code"
     body = "Your verification code is: " + code + "."
     service = EmailService()
-    x = db.store_verification_code(email, code)
-    print(x)
+    db.store_verification_code(email, code)
     try:
         service.send_email(subject, body, email)
         return f"Code successfully sent to: {email}"

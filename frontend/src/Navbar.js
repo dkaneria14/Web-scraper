@@ -1,5 +1,4 @@
 // import { Link, useMatch, useResolvedPath } from "react-router-dom"
-import logo1 from "./logotest1.png"
 import {TextField, Alert, Snackbar} from '@mui/material';
 import { useState } from "react";
 import Paper from '@mui/material/Paper';
@@ -62,7 +61,7 @@ export default function Navbar(props) {
 
   return (
     <div className="nav">
-      <a href=""><img className="stockwatch-logo" src={logo1} alt="Logo" width="60" height="60" style={{ marginLeft: 10 }} /></a>
+      <a href=""><img className="stockwatch-logo" src={props.brandmark} alt="Logo" width="60" height="60" style={{ marginLeft: 10 }} /></a>
       <Paper
         component="form"
         sx={{
