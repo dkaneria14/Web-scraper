@@ -4,12 +4,18 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Fallback from "../assets/stockGraphs/AAPL.png";
+import Uptrend from "../assets/stockGraphs/uptrend.png";
+import Downtrend from "../assets/stockGraphs/downtrend.png";
 import { Grid } from "@mui/material";
 import './StockCard.css';
 import { CircularProgress } from "@mui/material";
 import StockDialog from "./StockDialog";
 import { useState } from "react";
+
+const trendOptions = {
+  up: {textColor: 'green', img: Uptrend},
+  down: {textColor: 'red', img: Downtrend},
+};
 
 export default function StockCard(props) {
 
@@ -35,10 +41,12 @@ export default function StockCard(props) {
     onClick(cardInfo.ticker);
   }
 
+  const trendDirection = priceDirection === "-" ? 'down' : "up";
+
   return (
     <Grid className="stock-card-grid" item>
       <Card className="stock-card" sx={{ width: 200, borderRadius: "1em" }} >
-        <CardMedia component="img" height="90" image={Fallback} alt="" onClick={refreshTicker} />
+        <CardMedia component="img" height="90" image={trendOptions[trendDirection].img} alt="" onClick={refreshTicker} />
         {cardInfo.refreshing ? <CircularProgress sx={{ m: 3 }} /> : <CardContent onClick={refreshTicker}>
           <Typography
             sx={{
@@ -51,15 +59,14 @@ export default function StockCard(props) {
             gutterBottom
             variant="h6"
             component="div"
-            color="gray"
           >
             {cardInfo.name}<br/><br/>
           </Typography>
-          <Typography variant="h5" color="black">
+          <Typography variant="h5">
             {cardInfo.ticker} ${cardInfo.price}
           </Typography>
           {/* Edge case to consider soon: no price change -> black text */}
-          <Typography variant="body1" color={priceDirection === "-" ? "red" : "green"}>
+          <Typography variant="body1" color={trendOptions[trendDirection].textColor}>
             ${cardInfo.priceChange} ({cardInfo.percentChange}%)
           </Typography>
         </CardContent>}
@@ -69,10 +76,6 @@ export default function StockCard(props) {
       </Card>
       {/* Only render on expand*/}
       {open ? <StockDialog open={open} setOpen={setOpen} stockInfo={stockInfo} /> : null}
-      {/* {
-        console.log(cardInfo)
-      } */}
-
     </Grid>
   );
 }

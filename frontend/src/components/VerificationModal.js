@@ -62,7 +62,6 @@ export default function AlertSignupModal(props) {
       <Typography
         sx={{ mt: 3 }}
         align="center"
-        color="black"
         variant="h6"
       >
         Email: {props.email}

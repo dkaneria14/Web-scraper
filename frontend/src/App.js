@@ -1,31 +1,31 @@
 import './App.css';
 import Navbar from "./Navbar";
 import StockCard from "./components/StockCard";
-import { Typography, Stack, Chip, TextField, Skeleton } from '@mui/material';
+import { Typography, Stack, Chip, TextField, Skeleton, Box } from '@mui/material';
 import Paper from '@mui/material/Paper';
+// Icons
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
-import logo from "./logotest.png"
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+// Logos
+import wordmark from './assets/branding/wordmark.png';
+import wordmarkWhite from './assets/branding/wordmark-white.png';
+import brandmark from './assets/branding/brandmark.png';
+import brandmarkWhite from './assets/branding/brandmark-white.png';
 import axios from 'axios';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 // import { Route, Routes } from "react-router-dom";
 import { Grid } from "@mui/material";
 import apiEndpoint from './apiEndpoint';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
 
-const theme = createTheme({
-  typography: {
-    "fontFamily": `'Quicksand',-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;`,
-    "fontWeightLight": 400,
-    "fontWeightRegular": 500,
-    "fontWeightMedium": 600,
-    "fontWeightBold": 700,
-   }
-});
+const darkModeConstants = {
+  dark: {wordmark: wordmarkWhite, brandmark: brandmarkWhite},
+  light: {wordmark: wordmark, brandmark: brandmark}
+}
 
 function App() {
  
@@ -34,10 +34,27 @@ function App() {
   const [stockInfo, setStockInfo] = useState({});
   const [stockInfoLoaded, setStockInfoLoaded] = useState(false);
   const [tickerList, setTickerList] = useState({});
+  const [darkMode, setDarkMode] = useState('dark');
   
   const tickerAPI = apiEndpoint + "/stockList/";
 
   const tickerListURL = apiEndpoint + "/stocklistDB/";
+  
+
+  const theme = useMemo(() => createTheme({
+    typography: {
+      "fontFamily": `'Quicksand',-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;`,
+      "fontWeightLight": 400,
+      "fontWeightRegular": 500,
+      "fontWeightMedium": 600,
+      "fontWeightBold": 700,
+     },
+     palette: {
+      mode: darkMode,
+    },
+  }), [darkMode]);
   
   useEffect(() => {
     getTickers().then(() => {
@@ -185,7 +202,7 @@ function App() {
         skeletons.push(
           <Stack key="skeleton-stack" direction='column' justifyContent='center' alignItems='center'>
             <CircularProgress sx={{ mt: 5 }} />
-            <Typography sx={{ mt: 3 }} align='center' color='black' variant='h6'>
+            <Typography sx={{ mt: 3 }} align='center' color="text.primary" variant='h6'>
               Fetching data for selected stocks...
             </Typography>
           </Stack>
@@ -199,15 +216,18 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-    <div className="App">
-      <Navbar selectedStocks={selectedStocks} />
-      <header className="App-header">
+    <Box className="App" sx={{bgcolor: 'background.default'}}>
+      <Navbar selectedStocks={selectedStocks} brandmark={darkModeConstants[darkMode].brandmark} sx={{bgcolor: 'background.default'}} />
+      <Box className="App-header" sx={{bgcolor: 'background.default'}}>
+      <IconButton sx={{ ml: 1 }} onClick={() => setDarkMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'))}>
+        {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+      </IconButton>
       <Grid container spacing={2} justifyContent='center' alignContent='center'>
         <Grid item xs={11} sm={8} md={6} lg={3} xl={3}>
-          <img src={logo} alt="StockWatch Logo" width="100%" />
+          <img src={darkModeConstants[darkMode].wordmark} alt="StockWatch Logo" width="100%" />
         </Grid>
         <Grid item xs={12}>
-          <Typography align='center' variant='p'>
+          <Typography align='center' variant='p' color="text.primary">
             Watch Your Stock Around The Clock
           </Typography>
         </Grid>
@@ -276,7 +296,7 @@ function App() {
             <Typography
               sx={{ mt: 3 }}
               align="center"
-              color="black"
+              color="text.primary"
               variant="h5"
             >
               Selected Stocks:
@@ -288,7 +308,7 @@ function App() {
                 key={ticker}
                 label={ticker}
                 color="primary"
-                onClick={() => refreshTicker(ticker)}
+                onClick={() => {if (stockInfo[ticker] && stockInfo[ticker].cardInfo) refreshTicker(ticker)}}
                 onDelete={(e) => handleDelete(ticker)}
               />
             );
@@ -304,8 +324,8 @@ function App() {
           })): selectedStocksList.length > 0 && !stockInfoLoaded ? <Stack direction="row" justifyContent='center' alignItems='center' spacing={2}>{generateSkeletons(6)}</Stack> : null}
           </Grid>
           </div>
-      </header>
-    </div>
+      </Box>
+    </Box>
     </ThemeProvider>
   );
  
