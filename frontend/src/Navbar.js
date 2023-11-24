@@ -109,7 +109,7 @@ export default function Navbar(props) {
             p: "10px 15px",
             display: "flex",
             alignItems: "center",
-            width: 400,
+            width: 500,
             marginLeft: "auto",
             mr: 3,
             height: 40,
@@ -118,11 +118,9 @@ export default function Navbar(props) {
         >
           <Typography
             sx={{ ml: 1, flex: 1 }}
-
             variant="standard"
             type="email"
-
-          >{user} </Typography>
+          >Logged in as <b>{user}</b> </Typography>
           <Button variant="contained" type="submit">
             Logout
           </Button>
