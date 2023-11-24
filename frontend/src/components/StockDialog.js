@@ -71,12 +71,14 @@ const StockDialog = (props) => {
         <span style={{ fontSize: "0.8rem", color: "rgb(128, 128, 128)" }}>
           Date: {day} {month}
         </span>
-        <Button onClick={handleClose} style={{marginLeft:"300px"}} autoFocus>
+        <span>
+        <Button onClick={handleClose} autoFocus sx={{ m: 1}}>
           Close
         </Button>
-        <Button variant="contained" type="submit">
+        <Button variant="contained" type="submit" sx={{ m: 1}}>
                 Save
         </Button>
+        </span>
       </DialogActions>
     </Dialog>
   );
