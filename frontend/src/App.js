@@ -14,6 +14,7 @@ import { Grid } from "@mui/material";
 import apiEndpoint from './apiEndpoint';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
+import { useLocalStorage } from './components/useLocalStorage';
 
 const theme = createTheme({
   typography: {
@@ -29,12 +30,13 @@ const theme = createTheme({
 
 function App() {
  
+  const [user, setUser] = useLocalStorage("user", "");
+
   const [selectedStocks, setSelectedStocks] = useState({});
   const [searchStock, setSearchStock] = useState("");
   const [stockInfo, setStockInfo] = useState({});
   const [stockInfoLoaded, setStockInfoLoaded] = useState(false);
   const [tickerList, setTickerList] = useState({});
-  
   const tickerAPI = apiEndpoint + "/stockList/";
 
   const tickerListURL = apiEndpoint + "/stocklistDB/";
@@ -200,7 +202,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
     <div className="App">
-      <Navbar selectedStocks={selectedStocks} />
+      <Navbar selectedStocks={selectedStocks} user={user} setUser={setUser} />
       <header className="App-header">
       <Grid container spacing={2} justifyContent='center' alignContent='center'>
         <Grid item xs={11} sm={8} md={6} lg={3} xl={3}>
