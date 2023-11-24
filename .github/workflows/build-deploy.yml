@@ -1,0 +1,45 @@
+name: Build and Deploy Docker Images
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+env:
+  RASE: ${{ vars.RASE }}
+  STOCKWATCH_DOCKERHUB_REPO: ${{ vars.STOCKWATCH_DOCKERHUB_REPO }}
+
+jobs:
+  cicd:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repo
+      uses: actions/checkout@v4
+      with:
+        path: stockwatch
+    
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and Push Docker Images
+      run: |
+         cd stockwatch
+         echo "" > .env
+         chmod +x ./deployImages.sh
+         ./deployImages.sh
+      shell: bash
+
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        passphrase: ${{ secrets.PASSPHRASE }}
+        script: |
+          nohup ./deploy.sh > stockwatch.log 2> stockwatch.err < /dev/null &  
