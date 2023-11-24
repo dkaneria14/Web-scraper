@@ -1,14 +1,32 @@
 import pymongo 
+import certifi
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime, timedelta
+from pydantic import BaseModel
+
+
+class Stock(BaseModel):
+    name:str
+    threshold:float
+    isAbove:bool
+    date:str
+
+class User(BaseModel):
+    email: str
+    stockList:list[Stock]
+        
+
+class EmailRequest(BaseModel):
+    email: str
+
 
 class DataBase:
     DB = None
     def __init__(self):
         uri = "mongodb+srv://stock-admin:secure_pass123@cluster0.csya3y9.mongodb.net/?retryWrites=true&w=majority"
         # Create a new client and connect to the server
-        client = MongoClient(uri, server_api=ServerApi('1'))
+        client = MongoClient(uri, server_api=ServerApi('1'),tlsCAFile=certifi.where())
         DataBase.DB = client["StockDataBase"]
         self.collection = DataBase.DB["StockNames"]
 
@@ -45,3 +63,27 @@ class DataBase:
                 return True
         return False
 
+    def insert_user_data(self,user:User):
+        self.collection = DataBase.DB["UserInformation"]
+        query = {"email": user.email}
+        user_data = self.collection.find_one(query)
+
+
+
+        if user_data:
+            new_stock_list = { "$push": { 'stockList':  user.stockList[0].model_dump()} }
+            self.collection.update_one(query, new_stock_list)
+        else:
+            self.collection.insert_one(user.model_dump())
+     
+    
+    def get_user_data(self, email: str):
+        self.collection = DataBase.DB["UserInformation"]
+        query = {"email": email}
+        user_data = self.collection.find_one(query)
+
+        # Convert ObjectId to string
+        if user_data and "_id" in user_data:
+            user_data["_id"] = str(user_data["_id"])
+
+        return user_data

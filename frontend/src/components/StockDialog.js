@@ -1,54 +1,85 @@
 import React from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText } from "@mui/material";
+import {Threshold} from './threshold'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Grid, Card, CardContent } from "@mui/material";
 
 const StockDialog = (props) => {
+  const { open, setOpen } = props;
+  const {
+    shortName,
+    symbol,
+    currency,
+    marketCap,
+    totalRevenue,
+    floatShares,
+    peRatio,
+    currentPrice,
+    dayHigh,
+    dayLow
+  } = props.stockInfo;
+  const currentDate = new Date();
+  const day = currentDate.getDate();
+  const month = currentDate.toLocaleString("default", { month: "long" });
 
-    const { open, setOpen } = props;
-    const { shortName, symbol, ...remainingStockInfo } = props.stockInfo;
+  // Close Dialog
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-    // Close Dialog
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    // Threshold Change function
-
-    // Save button Function
-
-    const convertToPascalCaseSpaced = (camelCase) => {
-        const spacedString = camelCase.replace(/([A-Z])/g, ' $1');
-        return `${spacedString.charAt(0).toUpperCase()}${spacedString.slice(1)}`;
+  const convertToBillion = (number) => {
+    const absNumber = Math.abs(number);
+    if (absNumber >= 1e12) {
+      return (number / 1e12).toFixed(2) + "T";
+    } else if (absNumber >= 1e9 && absNumber < 1e12) {
+      return (number / 1e9).toFixed(2) + "B";
+    } else {
+      return number.toFixed(2);
     }
+  };
 
+  const stockDialogInfo = (title, value) => {
     return (
-        <Dialog
-            open={open}
-            onClose={handleClose}
-        >
-            <DialogTitle> {shortName} - {symbol}
-            </DialogTitle>
-            <DialogContent>
-          {/* Placeholder content - flat objects */}
-          {Object.keys(remainingStockInfo).map((infoKey) => {
-            const info = remainingStockInfo[infoKey];
-            return !(typeof info === "object" && info !== null) ? (
-              <DialogContentText key={`${symbol}-${infoKey}`}>
-                <b style={{ color: "rgb(17, 0, 107)" }}>
-                  {convertToPascalCaseSpaced(infoKey)}:
-                </b>{" "}
-                {remainingStockInfo[infoKey]}
-                <br />
-              </DialogContentText>
-            ) : null;
-          })}
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose} autoFocus>
-                    Close
-                </Button>
-            </DialogActions>
-        </Dialog>
-    );
-}
+
+    <Grid item xs={6}>
+      <Card sx={{ borderRadius: "1em", height: "100%" }} >
+        <CardContent >
+          <Typography variant='p' color='rgb(17, 0, 107)' fontWeight="bold">{title}</Typography>
+          <Typography variant='body1'>{value}</Typography>
+        </CardContent>
+      </Card>
+      </Grid>);
+  }
+
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle style={{ fontSize: "1.8rem", display: "flex", justifyContent: "center", backgroundColor: "#f1f1f1" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <span style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{shortName} - {symbol}</span>
+        </div>
+      </DialogTitle>
+      <DialogContent sx={{ backgroundColor: "#f1f1f1" }}>
+      <Grid container spacing={1} justifyContent='center' alignContent='center'>
+        {stockDialogInfo("Current Price:", `${currentPrice} ${currency}`)}
+        {stockDialogInfo("High/Low:", `${dayHigh}/${dayLow.toFixed(2)}`)}
+        {stockDialogInfo("Market Capitalization:", convertToBillion(marketCap))}
+        {stockDialogInfo("Total Revenue:", convertToBillion(totalRevenue))}
+        {stockDialogInfo("Float Shares:", convertToBillion(floatShares))}
+        {stockDialogInfo("Price to Earnings Ratio:", peRatio)}
+      </Grid>
+      </DialogContent>
+      <Threshold  style={{backgroundColor: "#f1f1f1" }}/>
+      <DialogActions style={{ justifyContent: "space-between", padding: "16px", backgroundColor: "#f1f1f1" }}>
+        <span style={{ fontSize: "0.8rem", color: "rgb(128, 128, 128)" }}>
+          Date: {day} {month}
+        </span>
+        <Button onClick={handleClose} style={{marginLeft:"300px"}} autoFocus>
+          Close
+        </Button>
+        <Button variant="contained" type="submit">
+                Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default StockDialog;
