@@ -10,6 +10,7 @@ import yfinance as yf
 
 from yFinanceTempFix.yfFix import YFinance
 from apscheduler.schedulers.background import BackgroundScheduler
+from emails import StockEmail
 
 app = FastAPI()
 
@@ -48,7 +49,11 @@ async def startup_event():
 @app.post("/insertList")
 async def insert_user(user:User):
     obj = DataBase()
+    #Send out the following a stock email
+    StockEmail().follow_stock_email(user.email,user.stockList)
+    #Complete insertion into User Information
     obj.insert_user_data(user)
+
 
 
 @app.get("/getUserSetStockValues")
@@ -83,6 +88,8 @@ def filter(stockName: str):
 
 def update_stock_prices():
     
+    #Insert Logic here for Threshold checking and Emailing
+
     print(f"Updating stock prices at {datetime.now()}")
     stock_tickers = ["AAPL", "GOOG", "MSFT"]  
 
