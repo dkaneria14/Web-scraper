@@ -47,13 +47,14 @@ async def validate_code(data: ValidateVerificationCode):
     code = data.code
     validCode = db.check_code_valid(email, code)
     if (validCode):
-        # Add email to verified list of emails
-        db.add_verified_email(email)
-        # Create a welcome email for verifying
-        subject = "Thank you for verifying your email"
-        body = "Your email has been verified for use on StockWatch. Watch your stock around the clock."
-        service = EmailService()
-        service.send_email(subject, body, email)
+        # Add email to verified list of emails if not already in there
+        addedEmail = db.add_verified_email(email);
+        if (addedEmail):
+            # Create a welcome email for verifying
+            subject = "Thank you for verifying your email"
+            body = "Your email has been verified for use on StockWatch. Watch your stock around the clock."
+            service = EmailService()
+            service.send_email(subject, body, email)
         return "Code verified"
     else:
         return None
