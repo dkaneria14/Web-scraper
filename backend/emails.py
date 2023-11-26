@@ -1,4 +1,4 @@
-from .emailService import EmailService
+from emailService import EmailService
 
 from database.database import Stock
 class StockEmail:
