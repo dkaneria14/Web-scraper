@@ -50,16 +50,19 @@ class DataBase:
 
     def store_verification_code(self, email: str, code: str):
         self.collection = DataBase.DB["VerificationCodes"]
-        return self.collection.insert_one({'email': email, 'code': code, 'timestamp': datetime.now()}).inserted_id
+        query = {"email": email}
+        # Update or insert verification code into db
+        return self.collection.update_one(query, {"$set": {'email': email,'code': code, 'timestamp': datetime.now()}}, upsert=True)
 
 
     def check_code_valid(self, email: str, code: str):
         self.collection = DataBase.DB["VerificationCodes"]
-        document = self.collection.find_one({"email": email, "code": code},{'_id': 0})
+        query = {"email": email, "code": code}
+        document = self.collection.find_one(query)
         if document:
             timestamp = document.get("timestamp")
             if timestamp and (datetime.now() - timestamp) < timedelta(minutes=5):
-                # If found, then let's delete the code and return that its validity
+                self.collection.delete_one({ "_id": document.get('_id')})
                 return True
         return False
 
