@@ -19,6 +19,7 @@ import apiEndpoint from "../apiEndpoint";
 
 const steps = ['Send Verification Email', 'Confirm Email Code'];
 const emailEndpoint = apiEndpoint + "/email/";
+const authEndpoint = apiEndpoint + "/auth/";
 const incorrectCode = "The code you entered was incorrect. Please enter the correct code or request a new one.";
 
 export default function AlertSignupModal(props) {
@@ -86,15 +87,17 @@ export default function AlertSignupModal(props) {
   const validateCode = () => {
     if (verificationCode.length !== 6) return;
     setSendingCode(true);
-    axios.post(`${emailEndpoint}validate_code/`,{
+    const endpoint = registered ? `${authEndpoint}login/` : `${emailEndpoint}validate_code/`;
+    axios.post(endpoint,{
       email: props.email,
       code: verificationCode
     }).then((response) => {
       setSendingCode(false);
       if (!response.data) return alertUser(incorrectCode, "error");
-      alertUser(response.data);
+      alertUser("Code verified");
       handleClose();
       if (registered) {
+        sessionStorage.setItem("accessToken", response.data.access_token)
         setUserEmail(email);
       }
     })

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from database.database import DataBase,User, EmailRequest
 from api import email
@@ -12,9 +12,15 @@ from yFinanceTempFix.yfFix import YFinance
 from apscheduler.schedulers.background import BackgroundScheduler
 from emails import StockEmail
 
+# Authentication Related
+from api import auth
+from typing import Annotated
+
+
 app = FastAPI()
 
 app.include_router(email.router)
+app.include_router(auth.router)
 
 origins = [
     "http://localhost:8000",
@@ -57,9 +63,9 @@ async def insert_user(user:User):
 
 
 @app.get("/getUserSetStockValues")
-async def get_stock_threshold_values(emailrequest : EmailRequest):
+async def get_stock_threshold_values(emailrequest : Annotated[EmailRequest, Depends(auth.get_current_user)]):
     obj = DataBase()
-    email = emailrequest.email
+    email = emailrequest['email']
     return obj.get_user_data(email)
 
 @app.get("/stockList/{stockName}")

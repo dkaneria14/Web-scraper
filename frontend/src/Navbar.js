@@ -65,6 +65,7 @@ export default function Navbar(props) {
   };
 
   const logOut = () => {
+    sessionStorage.removeItem("accessToken");
     setRegistered(false);
     setUserEmail('');
     setEmail('');
@@ -87,7 +88,7 @@ export default function Navbar(props) {
         }}
         onSubmit={signUp}
       >
-        {registered && userEmail ? <>
+        {registered && userEmail || userEmail ? <>
         <Typography>Logged in as: {userEmail}</Typography>
         <Button onClick={logOut} variant="contained" sx={{m:1}} type="submit">
           Logout

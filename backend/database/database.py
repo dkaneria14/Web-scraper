@@ -84,7 +84,7 @@ class DataBase:
         self.collection = DataBase.DB["UserInformation"]
         query = {"email": email}
         user_data = self.collection.find_one(query)
-
+        if not user_data: return None
         # Convert ObjectId to string
         if user_data and "_id" in user_data:
             user_data["_id"] = str(user_data["_id"])

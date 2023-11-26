@@ -37,11 +37,14 @@ function App() {
   const [darkMode, setDarkMode] = useState('dark');
   // If a userEmail is set, a user is logged in
   const [userEmail, setUserEmail] = useState('');
+  // User data grabbed from db
+  const [userInfo, setUserInfo ] = useState({});
   
   const tickerAPI = apiEndpoint + "/stockList/";
 
   const tickerListURL = apiEndpoint + "/stocklistDB/";
   
+  const userDataEndpoint = apiEndpoint + "/getUserSetStockValues";
 
   const theme = useMemo(() => createTheme({
     typography: {
@@ -60,12 +63,58 @@ function App() {
   
   useEffect(() => {
     getTickers().then(() => {
-      loadSelectedStocks();
-    });
+      checkForSignedInUser();
+    })
   }, []);
 
-  const loadSelectedStocks = () => {
-    const selectedTickers = JSON.parse(localStorage.getItem('stockList'));
+  useEffect(() => {
+    if (userEmail === "") {setSelectedStocks({}); return;}
+    checkForSignedInUser();
+  }, [userEmail, userInfo])
+
+  const checkForSignedInUser = () => {
+    // Check if there is a valid user session
+    const sessionToken = sessionStorage.getItem('accessToken');
+    if (sessionToken) {
+      getLoggedInUser(sessionToken);
+      getUserStocks(sessionToken);
+      loadSelectedStocks(true);
+    } else {loadSelectedStocks()}
+  }
+
+  const getLoggedInUser = (sessionToken) => {
+    let config = {
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${sessionToken}`
+      }
+    };
+    axios.get(apiEndpoint+"/auth/loggedin", config).then((response) => {
+      if(response.data) {
+        const email = response.data['email'];
+        if (email && email !== userEmail) setUserEmail(email);
+      }
+    })
+  }
+
+  const getUserStocks = (sessionToken) => {
+    let config = {
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${sessionToken}`
+      },
+      data : JSON.stringify({"email": "stockwatch714@gmail.com"})
+    };
+    axios.get(userDataEndpoint, config).then((response) => {
+      console.log(response);
+      if (response.data && JSON.stringify(userInfo) !== JSON.stringify(response.data)) {
+        console.log("setting");
+        setUserInfo(response.data)};
+    })
+  }
+
+  const loadSelectedStocks = (loggedIn = false) => {
+    const selectedTickers = loggedIn && userInfo && userInfo.stockList ? userInfo.stockList.map((stockInUserList) => stockInUserList.name ) : JSON.parse(localStorage.getItem('stockList'));
     if (selectedTickers) {
       setStockInfoLoaded(false);
       setSelectedStocks(selectedTickers);
