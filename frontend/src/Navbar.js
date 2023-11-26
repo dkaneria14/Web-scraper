@@ -1,5 +1,5 @@
 // import { Link, useMatch, useResolvedPath } from "react-router-dom"
-import {TextField, Alert, Snackbar} from '@mui/material';
+import {TextField, Alert, Snackbar, Typography} from '@mui/material';
 import { useState } from "react";
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -9,7 +9,7 @@ import apiEndpoint from "./apiEndpoint";
 
 const noStockError = "Error - Please select some stocks below first.";
 const emailVerifiedError = "Your email is not yet verified. Please follow verification instructions.";
-const emailVerified = "Your email is verified, you may now schedule alerts and thresholds for your stocks.";
+const emailVerified = "Your email is verified, you may log in to schedule alerts and thresholds for your stocks.";
 
 const userMessages = {
   noStockError: {msg: noStockError, type: "error"},
@@ -23,7 +23,10 @@ export default function Navbar(props) {
   const [userMessage, setUserMsg] = useState(userMessages.noStockError);
   const [verify, setVerify] = useState(false);
   const [signUpEmail, setEmail] = useState("");
+  const [registered, setRegistered] = useState(false);
   const verificationEndpoint =  apiEndpoint + "/email/verified/";
+
+  const { userEmail, setUserEmail } = props;
 
   const signUp = (event) => {
     event.preventDefault();
@@ -35,8 +38,10 @@ export default function Navbar(props) {
           setUserMsg(userMessages.emailVerified);
         } else {
           setUserMsg(userMessages.emailVerifiedError);
-          setVerify(true);
         }
+        setRegistered(response.data !== null)
+        // Either the user will log in with an email code or verify their email for the first time
+        setVerify(true); 
         showAlert(true);
       })
       .catch((error) => {
@@ -56,8 +61,15 @@ export default function Navbar(props) {
   }
   
   const createVerifyModal = () => {
-    return <VerificationModal alertUser={alertUser} setVerify={setVerify} email={signUpEmail}></VerificationModal>;
+    return <VerificationModal alertUser={alertUser} setVerify={setVerify} registered={registered} email={signUpEmail} setUserEmail={setUserEmail}></VerificationModal>;
   };
+
+  const logOut = () => {
+    setRegistered(false);
+    setUserEmail('');
+    setEmail('');
+    setVerify(false);
+  }
 
   return (
     <div className="nav">
@@ -75,7 +87,12 @@ export default function Navbar(props) {
         }}
         onSubmit={signUp}
       >
-        <TextField
+        {registered && userEmail ? <>
+        <Typography>Logged in as: {userEmail}</Typography>
+        <Button onClick={logOut} variant="contained" sx={{m:1}} type="submit">
+          Logout
+        </Button>
+        </> :<><TextField
           sx={{ ml: 1, flex: 1 }}
           placeholder="Sign up for Email Alerts"
           value={signUpEmail}
@@ -88,8 +105,8 @@ export default function Navbar(props) {
           onChange={(e) => setEmail(e.target.value)}
         />
         <Button variant="contained" type="submit">
-          SignUp
-        </Button>
+          SignUp/Login
+        </Button></>}
       </Paper>
       <Snackbar open={showUserAlerts} autoHideDuration={1500} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
         <Alert onClose={handleClose} severity={userMessage['type'] ? userMessage['type'] : "success"} sx={{ width: "100%" }}>{userMessage.msg}</Alert>

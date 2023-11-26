@@ -35,6 +35,8 @@ function App() {
   const [stockInfoLoaded, setStockInfoLoaded] = useState(false);
   const [tickerList, setTickerList] = useState({});
   const [darkMode, setDarkMode] = useState('dark');
+  // If a userEmail is set, a user is logged in
+  const [userEmail, setUserEmail] = useState('');
   
   const tickerAPI = apiEndpoint + "/stockList/";
 
@@ -217,7 +219,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
     <Box className="App" sx={{bgcolor: 'background.default'}}>
-      <Navbar selectedStocks={selectedStocks} brandmark={darkModeConstants[darkMode].brandmark} sx={{bgcolor: 'background.default'}} />
+      <Navbar userEmail={userEmail} setUserEmail={setUserEmail} selectedStocks={selectedStocks} brandmark={darkModeConstants[darkMode].brandmark} sx={{bgcolor: 'background.default'}} />
       <Box className="App-header" sx={{bgcolor: 'background.default'}}>
       <IconButton sx={{ ml: 1 }} onClick={() => setDarkMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'))}>
         {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
@@ -320,7 +322,7 @@ function App() {
             const stockData = stockInfo[ticker];
             if (!(stockData)) return null;
             if (!('cardInfo' in stockData)) return null;
-            return <StockCard key={ticker} stockData={stockData} onClick={refreshTicker}/>
+            return <StockCard key={ticker} stockData={stockData} onClick={refreshTicker} userEmail={userEmail}/>
           })): selectedStocksList.length > 0 && !stockInfoLoaded ? <Stack direction="row" justifyContent='center' alignItems='center' spacing={2}>{generateSkeletons(6)}</Stack> : null}
           </Grid>
           </div>

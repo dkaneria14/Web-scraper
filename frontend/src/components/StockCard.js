@@ -19,7 +19,7 @@ const trendOptions = {
 
 export default function StockCard(props) {
 
-  const { onClick } = props;
+  const { onClick, userEmail } = props;
   const { cardInfo, ...stockInfo } = props.stockData;
 
   // Dialog states 
@@ -75,7 +75,7 @@ export default function StockCard(props) {
         </CardActions>
       </Card>
       {/* Only render on expand*/}
-      {open ? <StockDialog open={open} setOpen={setOpen} stockInfo={stockInfo} /> : null}
+      {open ? <StockDialog open={open} setOpen={setOpen} stockInfo={stockInfo} userEmail={userEmail} /> : null}
     </Grid>
   );
 }

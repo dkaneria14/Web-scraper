@@ -3,7 +3,7 @@ import {Threshold} from './threshold'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Grid, Card, CardContent } from "@mui/material";
 
 const StockDialog = (props) => {
-  const { open, setOpen } = props;
+  const { open, setOpen, userEmail } = props;
   const {
     shortName,
     symbol,
@@ -64,7 +64,9 @@ const StockDialog = (props) => {
         {stockDialogInfo("Total Revenue:", convertToBillion(totalRevenue))}
         {stockDialogInfo("Float Shares:", convertToBillion(floatShares))}
         {stockDialogInfo("Price to Earnings Ratio:", peRatio)}
-        <Grid item ><Threshold  sx={{bgcolor: 'background.default'}}/></Grid>
+        <Grid item >
+          {userEmail ? <Threshold  sx={{bgcolor: 'background.default'}}/> : <Typography>Please Sign in to set thresholds for stocks</Typography>}
+        </Grid>
       </Grid>
       </DialogContent>
       <DialogActions style={{ justifyContent: "space-between", padding: "16px"}} sx={{bgcolor: 'background.default'}}>
