@@ -1,24 +1,12 @@
-import pymongo 
+ 
 import certifi
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime, timedelta
-from pydantic import BaseModel
-
-
-class Stock(BaseModel):
-    name:str
-    threshold:float
-    isAbove:bool
-    date:str
-
-class User(BaseModel):
-    email: str
-    stockList:list[Stock]
-        
-
-class EmailRequest(BaseModel):
-    email: str
+import yfinance as yf
+from emails import StockEmail
+from yFinanceTempFix.yfFix import YFinance
+from database.basemodels import User
 
 
 class DataBase:
@@ -90,3 +78,27 @@ class DataBase:
             user_data["_id"] = str(user_data["_id"])
 
         return user_data
+
+
+    
+
+    def update_stock_prices(self, stockName : str, currentPrice: float, thresholdValue : float, emailOfUser : str):
+        obj = StockEmail()
+        if currentPrice < thresholdValue:
+            obj.reached_threshold_email(emailOfUser, stockName, thresholdValue)
+            
+            
+    def getUserBase(self):
+            self.collection = DataBase.DB["UserInformation"]
+            updatedStockInfo = {}
+            for eachUserDoc in self.collection.find():
+                emailOfUser = eachUserDoc["email"]
+                for eachUserStockParam in eachUserDoc["stockList"]:
+                    nameOfStock = eachUserStockParam["name"]
+                    # Only fetch stock data if not already fetched
+                    if (nameOfStock not in updatedStockInfo):
+                        updatedStockInfo[nameOfStock] = YFinance(nameOfStock)
+                    currentPrice = float(updatedStockInfo[nameOfStock].info["currentPrice"])
+                    print(nameOfStock)
+                    thresholdValue = eachUserStockParam["threshold"]
+                    self.update_stock_prices(nameOfStock,currentPrice, thresholdValue, emailOfUser)

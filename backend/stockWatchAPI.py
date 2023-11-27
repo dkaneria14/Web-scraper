@@ -1,13 +1,14 @@
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
-from database.database import DataBase,User, EmailRequest
+from database.database import DataBase
+from database.basemodels import EmailRequest,User
 from api import email
 from datetime import datetime
 import json
 import pytz
 import uvicorn
 import yfinance as yf
-
+import time
 from yFinanceTempFix.yfFix import YFinance
 from apscheduler.schedulers.background import BackgroundScheduler
 from emails import StockEmail
@@ -43,7 +44,8 @@ scheduler.start()
 
 @app.on_event("startup")
 async def startup_event():
-    scheduler.add_job(update_stock_prices, "interval", hours=1)
+    obj = DataBase()
+    scheduler.add_job(obj.getUserBase, "interval", seconds=3600)
 
 
 @app.post("/insertList")
@@ -57,9 +59,8 @@ async def insert_user(user:User):
 
 
 @app.get("/getUserSetStockValues")
-async def get_stock_threshold_values(emailrequest : EmailRequest):
+def get_stock_threshold_values(email: str = Query(...)):
     obj = DataBase()
-    email = emailrequest.email
     return obj.get_user_data(email)
 
 @app.get("/stockList/{stockName}")
@@ -86,16 +87,6 @@ def filter(stockName: str):
     my_json = json.loads(my_json_string)
     return my_json
 
-def update_stock_prices():
-    
-    #Insert Logic here for Threshold checking and Emailing
-
-    print(f"Updating stock prices at {datetime.now()}")
-    stock_tickers = ["AAPL", "GOOG", "MSFT"]  
-
-    for ticker in stock_tickers:
-        yfinance_instance = YFinance(ticker)
-        stock_info = yfinance_instance.info
 
 if __name__ == "__main__":
     uvicorn.run("stockWatchAPI:app", host="0.0.0.0", port=8000, reload=True)
