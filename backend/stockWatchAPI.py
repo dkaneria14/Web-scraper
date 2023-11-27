@@ -1,6 +1,7 @@
 from fastapi import FastAPI, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
-from database.database import DataBase,User, EmailRequest
+from database.database import DataBase
+from database.basemodels import EmailRequest,User
 from api import email
 from datetime import datetime
 import json
