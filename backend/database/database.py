@@ -4,8 +4,9 @@ from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime, timedelta
 from pydantic import BaseModel
-
-
+import yfinance as yf
+from emails import StockEmail
+from yFinanceTempFix.yfFix import YFinance
 class Stock(BaseModel):
     name:str
     threshold:float
@@ -90,3 +91,27 @@ class DataBase:
             user_data["_id"] = str(user_data["_id"])
 
         return user_data
+
+
+    
+
+    def update_stock_prices(self, stockName : str, thresholdValue : float, emailOfUser : str):
+        obj = StockEmail()
+        #Insert Logic here for Threshold checking and Emailing
+        wholeStockInfo = YFinance(stockName)
+        currentPrice = float(wholeStockInfo.info["currentPrice"])
+        
+        if currentPrice < thresholdValue:
+            obj.reached_threshold_email(emailOfUser, stockName, thresholdValue)
+            
+            
+    def getUserBase(self):
+            self.collection = DataBase.DB["UserInformation"]
+            
+            for eachUserDoc in self.collection.find():
+                emailOfUser = eachUserDoc["email"]
+                for eachUserStockParam in eachUserDoc["stockList"]:
+                    nameOfStock = eachUserStockParam["name"]
+                    print(nameOfStock)
+                    thresholdValue = eachUserStockParam["threshold"]
+                    self.update_stock_prices(nameOfStock,thresholdValue, emailOfUser)
