@@ -24,8 +24,7 @@ const incorrectCode = "The code you entered was incorrect. Please enter the corr
 export default function AlertSignupModal(props) {
   const [verificationCode, setVerificationCode] = useState('');
   const [sendingCode, setSendingCode] = useState(false);
-
-  const { setVerify, alertUser } = props;
+  const {setUser, setVerify, alertUser } = props;
 
   const handleClose = () => {
     setVerify(false);
@@ -92,6 +91,7 @@ export default function AlertSignupModal(props) {
       setSendingCode(false);
       if (!response.data) return alertUser(incorrectCode, "error");
       alertUser(response.data);
+      setUser(props.email);
       handleClose();
     })
     .catch((error) => {
