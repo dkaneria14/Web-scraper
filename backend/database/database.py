@@ -1,4 +1,4 @@
-import pymongo 
+ 
 import certifi
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import yfinance as yf
 from emails import StockEmail
 from yFinanceTempFix.yfFix import YFinance
-from database.basemodels import Stock, User,EmailRequest
+from database.basemodels import User
 
 
 class DataBase:
