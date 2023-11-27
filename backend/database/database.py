@@ -82,23 +82,23 @@ class DataBase:
 
     
 
-    def update_stock_prices(self, stockName : str, thresholdValue : float, emailOfUser : str):
+    def update_stock_prices(self, stockName : str, currentPrice: float, thresholdValue : float, emailOfUser : str):
         obj = StockEmail()
-        #Insert Logic here for Threshold checking and Emailing
-        wholeStockInfo = YFinance(stockName)
-        currentPrice = float(wholeStockInfo.info["currentPrice"])
-        
         if currentPrice < thresholdValue:
             obj.reached_threshold_email(emailOfUser, stockName, thresholdValue)
             
             
     def getUserBase(self):
             self.collection = DataBase.DB["UserInformation"]
-            
+            updatedStockInfo = {}
             for eachUserDoc in self.collection.find():
                 emailOfUser = eachUserDoc["email"]
                 for eachUserStockParam in eachUserDoc["stockList"]:
                     nameOfStock = eachUserStockParam["name"]
+                    # Only fetch stock data if not already fetched
+                    if (nameOfStock not in updatedStockInfo):
+                        updatedStockInfo[nameOfStock] = YFinance(nameOfStock)
+                    currentPrice = float(updatedStockInfo[nameOfStock].info["currentPrice"])
                     print(nameOfStock)
                     thresholdValue = eachUserStockParam["threshold"]
-                    self.update_stock_prices(nameOfStock,thresholdValue, emailOfUser)
+                    self.update_stock_prices(nameOfStock,currentPrice, thresholdValue, emailOfUser)
