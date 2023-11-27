@@ -1,6 +1,8 @@
 from emailService import EmailService
 
-#from database.database import Stock
+from database.basemodels import Stock
+
+
 class StockEmail:
 
     emailClient = None
@@ -16,6 +18,7 @@ class StockEmail:
         self.emailClient.send_email("Your Threshold(s) have been hit!",body,userEmail)
 
     def follow_stock_email(self,userEmail,stock):
+        print(stock)
         
-        body = "You have succesfully signed up to watch " +stock.name+" stock."
+        body = "You have succesfully signed up to watch " +stock[0].name+" stock."
         self.emailClient.send_email("Watching your Stock.",body,userEmail)

@@ -3,23 +3,10 @@ import certifi
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime, timedelta
-from pydantic import BaseModel
 import yfinance as yf
 from emails import StockEmail
 from yFinanceTempFix.yfFix import YFinance
-class Stock(BaseModel):
-    name:str
-    threshold:float
-    isAbove:bool
-    date:str
-
-class User(BaseModel):
-    email: str
-    stockList:list[Stock]
-        
-
-class EmailRequest(BaseModel):
-    email: str
+from database.basemodels import Stock, User,EmailRequest
 
 
 class DataBase:
