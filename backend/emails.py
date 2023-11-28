@@ -20,5 +20,9 @@ class StockEmail:
     def follow_stock_email(self,userEmail,stock):
         print(stock)
         
-        body = "You have succesfully signed up to watch " +stock[0].name+" stock."
+        body = "You have successfully signed up to watch " + stock +" stock."
         self.emailClient.send_email("Watching your Stock.",body,userEmail)
+
+    def stock_removed_email(self, userEmail, stock):
+        body = f'You have successfully removed {stock} from your watch list.'
+        self.emailClient.send_email(f'Removed from Watch List - {stock}',body,userEmail)

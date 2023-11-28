@@ -1,7 +1,7 @@
 from fastapi import FastAPI, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
 from database.database import DataBase
-from database.basemodels import EmailRequest,User
+from database.basemodels import EmailRequest,User, EmailStockRequest
 from api import email
 from datetime import datetime
 import json
@@ -25,8 +25,6 @@ origins = [
     "http://localhost:80",
     "http://127.0.0.1:80",
     "http://localhost",
-    "http://stockwatch.cloud",
-    "http://www.stockwatch.cloud",
     "https://stockwatch.cloud",
     "https://www.stockwatch.cloud"
 ]
@@ -51,11 +49,23 @@ async def startup_event():
 @app.post("/insertList")
 async def insert_user(user:User):
     obj = DataBase()
-    #Send out the following a stock email
-    StockEmail().follow_stock_email(user.email,user.stockList)
+    stockName = [stock for stock in user.stockList.keys()][0]
     #Complete insertion into User Information
-    obj.insert_user_data(user)
+    upserted = obj.insert_user_data(user, stockName)
+    #Send out the following a stock email only if successful
+    
+    if (upserted): StockEmail().follow_stock_email(user.email, stockName)
 
+
+@app.post("/deleteStock")
+async def delete_user_stock(emailStockReq: EmailStockRequest):
+    obj = DataBase()
+    email = emailStockReq.email
+    stock = emailStockReq.stock
+    #Complete insertion into User Information
+    deleted = obj.delete_user_stock(email, stock)
+    #Send out the following a stock email only if successful
+    if (deleted): StockEmail().stock_removed_email(email, stock)
 
 
 @app.get("/getUserSetStockValues")

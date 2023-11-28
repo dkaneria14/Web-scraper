@@ -44,6 +44,7 @@ function App() {
     "stockList",
     {}
   );
+  const [userStockThresholds, setUserStockThresholds] = useState({});
   const [searchStock, setSearchStock] = useState("");
   const [stockInfo, setStockInfo] = useState({});
   const [stockInfoLoaded, setStockInfoLoaded] = useState(false);
@@ -84,21 +85,16 @@ function App() {
     })
       .then((response) => {
         // console.log(response.data);
-        var list = [];
         if (response.data == null) {
           // console.log("setting");
           setUserStockList([]);
           loadSelectedStocks(suggestedStocks);
         } else {
           let list = [];
-          if (
-            response.data.stockList.length &&
-            response.data.stockList.length > 0
-          )
-            response.data.stockList.map((x) => {
-              list.push(x.name);
-              return list;
-            });
+          if (response.data && response.data.stockList) {
+            list = Object.keys(response.data.stockList);
+            setUserStockThresholds(response.data.stockList);
+          }
           setUserStockList(list);
           loadSelectedStocks(list);
           // console.log(userStockList)
@@ -118,13 +114,15 @@ function App() {
 
       // FetchUserInfo(user);
     }
-
     if (user) {
       // deleteTickers()
       FetchUserInfo(user);
-      loadSelectedStocks(userStockList);
     }
   }, [user]);
+
+  useEffect(() => {
+    loadSelectedStocks(userStockList);
+  }, [userStockThresholds])
 
   useEffect(() => {
     getTickers().then(() => {
@@ -143,11 +141,12 @@ function App() {
           axios.get(tickerAPI + ticker).then((response) => {
             if (response.data) {
               var cardInfo = generateStockCardInfo(response.data);
+              const userThreshold = userStockThresholds[ticker];
               if (!cardInfo) {
                 return dataNotFound.push(ticker);
               }
               setStockInfo((prevStockInfo) => {
-                prevStockInfo[ticker] = { ...response.data, cardInfo };
+                prevStockInfo[ticker] = { ...response.data, cardInfo, userThreshold };
                 return { ...prevStockInfo };
               });
             }
@@ -562,6 +561,7 @@ function App() {
                           key={ticker}
                           user={user}
                           stockData={stockData}
+                          userThreshold={userStockThresholds[ticker]}
                           onClick={refreshTicker}
                         />
                       );

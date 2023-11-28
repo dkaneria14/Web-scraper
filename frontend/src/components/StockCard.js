@@ -19,7 +19,7 @@ const trendOptions = {
 
 export default function StockCard(props) {
 
-  const { onClick, user } = props;
+  const { onClick, user, userThreshold } = props;
   const { cardInfo, ...stockInfo } = props.stockData;
 
   // Dialog states 
@@ -74,7 +74,7 @@ export default function StockCard(props) {
         </CardActions>
       </Card>
       {/* Only render on expand*/}
-      {open ? <StockDialog open={open} user={user} setOpen={setOpen} stockInfo={stockInfo} onClick={refreshTicker}/> : null}
+      {open ? <StockDialog open={open} user={user} setOpen={setOpen} stockInfo={stockInfo} userThreshold={userThreshold} onClick={refreshTicker}/> : null}
     </Grid>
   );
 }

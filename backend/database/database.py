@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import yfinance as yf
 from emails import StockEmail
 from yFinanceTempFix.yfFix import YFinance
-from database.basemodels import User
+from database.basemodels import User, Stock
 
 
 class DataBase:
@@ -54,18 +54,24 @@ class DataBase:
                 return True
         return False
 
-    def insert_user_data(self,user:User):
+    def insert_user_data(self,user:User, tickerToInsertUpdate: str):
         self.collection = DataBase.DB["UserInformation"]
         query = {"email": user.email}
         user_data = self.collection.find_one(query)
-
-
-
         if user_data:
-            new_stock_list = { "$push": { 'stockList':  user.stockList[0].model_dump()} }
-            self.collection.update_one(query, new_stock_list)
-        else:
-            self.collection.insert_one(user.model_dump())
+            new_stock_list = { "$set": {f'stockList.{tickerToInsertUpdate}': Stock.model_dump(user.stockList[tickerToInsertUpdate])} }
+            return self.collection.update_one(query, new_stock_list).modified_count
+        else: 
+            return self.collection.insert_one(user.model_dump()).inserted_id
+
+    def delete_user_stock(self, email: str, stock: str):
+        self.collection = DataBase.DB["UserInformation"]
+        query = {"email": email, f'stockList.{stock}': {"$exists": True}}
+        user_data = self.collection.find_one(query)
+        if user_data:
+            new_stock_list = { "$unset": {f'stockList.{stock}': ""} }
+            return self.collection.update_one(query, new_stock_list)
+        
      
     
     def get_user_data(self, email: str):
@@ -79,8 +85,6 @@ class DataBase:
 
         return user_data
 
-
-    
 
     def update_stock_prices(self, stockName : str, currentPrice: float, thresholdValue : float, emailOfUser : str):
         obj = StockEmail()
