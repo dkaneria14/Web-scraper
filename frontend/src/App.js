@@ -492,7 +492,7 @@ function App() {
           )}
           {stockInfoLoaded && (
             <>
-              <div style={{ padding: "20px" }}>
+              <div style={{ padding: "20px", width: "70%"}}>
                 <Grid
                   sx={{ mb: 1 }}
                   justifyContent="center"
@@ -523,7 +523,7 @@ function App() {
                 </Grid>
               </div>
               {stockInfo && userStockList.length > 0 && (
-                <div style={{ padding: "20px" }}>
+                <div style={{ padding: "20px", width: "70%" }}>
                   <Divider
                     style={{
                       display: "flex",
@@ -532,7 +532,6 @@ function App() {
                     }}
                   >
                     <Typography
-                      item
                       color="text.primary"
                       variant="p"
                       style={{ alignItems: "left" }}

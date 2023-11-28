@@ -34,7 +34,7 @@ const StockDialog = (props) => {
 
   const [updateUserStock, setUpdateUserStock] = useState({});
   const [isAbove, setIsAbove] = useState(userThreshold ? userThreshold.isAbove : true);
-  const [threshold, setThreshold] = useState(userThreshold ? userThreshold.threshold : -1);
+  const [threshold, setThreshold] = useState(userThreshold ? userThreshold.threshold : 0);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({});
   const [openAlert, setOpenAlert] = useState(false);
