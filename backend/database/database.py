@@ -97,12 +97,14 @@ class DataBase:
             updatedStockInfo = {}
             for eachUserDoc in self.collection.find():
                 emailOfUser = eachUserDoc["email"]
-                for eachUserStockParam in eachUserDoc["stockList"]:
-                    nameOfStock = eachUserStockParam["name"]
+                stockList = eachUserDoc["stockList"]
+                for eachUserStockParam in  stockList:
+                    print(eachUserStockParam)
+                    nameOfStock = eachUserStockParam
                     # Only fetch stock data if not already fetched
                     if (nameOfStock not in updatedStockInfo):
                         updatedStockInfo[nameOfStock] = YFinance(nameOfStock)
                     currentPrice = float(updatedStockInfo[nameOfStock].info["currentPrice"])
                     print(nameOfStock)
-                    thresholdValue = eachUserStockParam["threshold"]
+                    thresholdValue = stockList[nameOfStock]["threshold"]
                     self.update_stock_prices(nameOfStock,currentPrice, thresholdValue, emailOfUser)
