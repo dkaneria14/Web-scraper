@@ -49,7 +49,7 @@ function App() {
   const [stockInfo, setStockInfo] = useState({});
   const [stockInfoLoaded, setStockInfoLoaded] = useState(false);
   const [tickerList, setTickerList] = useState({});
-  const [darkMode, setDarkMode] = useState("dark");
+  const [darkMode, setDarkMode] = useLocalStorage("theme", "light");
   const [openDialog, setOpenDialog] = useState(false);
   const [tickerInfo, setTickerInfo] = useState({});
 
@@ -97,8 +97,6 @@ function App() {
           }
           setUserStockList(list);
           loadSelectedStocks(list);
-          // console.log(userStockList)
-          // console.log(selectedStocksList)
         }
       })
       .catch((error) => {
@@ -122,7 +120,7 @@ function App() {
 
   useEffect(() => {
     loadSelectedStocks(userStockList);
-  }, [userStockThresholds])
+  }, [userStockThresholds]);
 
   useEffect(() => {
     getTickers().then(() => {
@@ -146,7 +144,11 @@ function App() {
                 return dataNotFound.push(ticker);
               }
               setStockInfo((prevStockInfo) => {
-                prevStockInfo[ticker] = { ...response.data, cardInfo, userThreshold };
+                prevStockInfo[ticker] = {
+                  ...response.data,
+                  cardInfo,
+                  userThreshold,
+                };
                 return { ...prevStockInfo };
               });
             }
@@ -164,34 +166,6 @@ function App() {
       });
     }
   };
-
-  // Load stock info for a particular stock
-  // const getStockData = (name) => {
-  //   axios
-  //     .get(tickerAPI + name)
-  //     .then((response) => {
-  //       if (response.data) {
-  //         // Stock Card info should be generated when new data fetched rather than running calculations on every render
-  //         const cardInfo = generateStockCardInfo(response.data);
-  //         if (!cardInfo) {
-  //           return window.alert(
-  //             `Not enough data found for symbol: ${name}. We suggest that you remove it. If this is incorrect, please try again.`
-  //           );
-  //         }
-  //         setStockInfo((prevStockInfo) => {
-  //           prevStockInfo[name] = { ...response.data, cardInfo };
-  //           return { ...prevStockInfo };
-  //         });
-  //       }
-  //     })
-  //     .then(() => {
-  //       if (!stockInfoLoaded) setStockInfoLoaded(true);
-  //     })
-  //     .catch((error) => {
-  //       // Handle any errors here
-  //       console.error("Error fetching data:", error);
-  //     });
-  // };
 
   // Get All stocks Tickers
   const getTickers = () => {
@@ -241,14 +215,6 @@ function App() {
     if (!confirmed) return;
     deleteTickers([item]);
   };
-
-  // const deleteTicker = (ticker) => {
-  //   setSuggestedStocks((prevSelectedStocks) => {
-  //     const { [ticker]: _, ...updatedSelectedStocks } = prevSelectedStocks;
-  //     localStorage.setItem("stockList", JSON.stringify(updatedSelectedStocks));
-  //     return updatedSelectedStocks;
-  //   });
-  // };
 
   // Delete stock from suggested list
   const deleteTickers = (tickers) => {
@@ -492,7 +458,7 @@ function App() {
           )}
           {stockInfoLoaded && (
             <>
-              <div style={{ padding: "20px", width: "70%"}}>
+              <div style={{ padding: "20px", width: "70%" }}>
                 <Grid
                   sx={{ mb: 1 }}
                   justifyContent="center"
@@ -508,9 +474,7 @@ function App() {
                     selectedStocksList.map((ticker) => {
                       const stockData = stockInfo[ticker];
                       if (!stockData) return null;
-                      // console.log("suggested : GOT stock data");
                       if (!("cardInfo" in stockData)) return null;
-                      // console.log("suggested : GOT card data");
                       return (
                         <StockCard
                           key={ticker}
@@ -552,9 +516,7 @@ function App() {
                     {userStockList.map((ticker) => {
                       const stockData = stockInfo[ticker];
                       if (!stockData) return null;
-                      // console.log("user info: GOT stock data");
                       if (!("cardInfo" in stockData)) return null;
-                      // console.log("user info: GOT Card data");
                       return (
                         <StockCard
                           key={ticker}
