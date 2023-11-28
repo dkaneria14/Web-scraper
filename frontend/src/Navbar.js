@@ -24,7 +24,7 @@ export default function Navbar(props) {
 
   const signUp = (event) => {
     event.preventDefault();
-    if (suggestedStocks.length === 0) return showAlert(true);
+    if (suggestedStocks && suggestedStocks.length === 0) return showAlert(true);
     // Otherwise check if email is verified or not before proceeding to Modal
     axios.get(verificationEndpoint + signUpEmail)
       .then((response) => {

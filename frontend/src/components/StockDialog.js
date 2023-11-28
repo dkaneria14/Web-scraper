@@ -30,11 +30,13 @@ const StockDialog = (props) => {
     currentPrice,
     dayHigh,
     dayLow,
+    threshold,
+    isAbove,
   } = props.stockInfo;
 
   const [updateUserStock, setUpdateUserStock] = useState({});
-  const [isAbove, setIsAbove] = useState(true);
-  const [threshold, setThreshold] = useState();
+  const [isAboveValue, setIsAbove] = useState(isAbove == false ? false : true);
+  const [thresholdValue, setThreshold] = useState(threshold || 0);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({});
   const [openAlert, setOpenAlert] = useState(false);
@@ -76,8 +78,8 @@ const StockDialog = (props) => {
   const handleThresholdIsAboveChange = () => {
     var newStockData = {
       name: symbol,
-      threshold: threshold,
-      isAbove: isAbove,
+      threshold: thresholdValue,
+      isAbove: isAboveValue,
       date: getCurrentDate(),
     };
 
@@ -96,8 +98,8 @@ const StockDialog = (props) => {
       stockList: [
         {
           name: symbol,
-          threshold: threshold,
-          isAbove: isAbove,
+          threshold: thresholdValue,
+          isAbove: isAboveValue,
           date: getCurrentDate(),
         },
       ],
@@ -106,7 +108,7 @@ const StockDialog = (props) => {
 
   useEffect(() => {
     setUpdateUserStock(handleThresholdIsAboveChange());
-  }, [threshold, isAbove]);
+  }, [thresholdValue, isAboveValue]);
 
   const handleDialogSubmit = () => {
     var payload = handleThresholdIsAboveChange();
@@ -210,9 +212,9 @@ const StockDialog = (props) => {
           {user && (
             <Grid item>
               <Threshold
-                threshold={threshold}
+                threshold={thresholdValue}
                 setThreshold={setThreshold}
-                isAbove={isAbove}
+                isAbove={isAboveValue}
                 setIsAbove={setIsAbove}
                 sx={{ bgcolor: "background.default" }}
               />

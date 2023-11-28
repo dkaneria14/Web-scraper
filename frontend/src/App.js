@@ -39,8 +39,9 @@ const darkModeConstants = {
 
 function App() {
   const [user, setUser] = useLocalStorage("user", "");
-  const [userStockList, setUserStockList] = useState([]);
-  const [suggestedStocks, setSuggestedStocks] = useLocalStorage(
+  const [userData, setUserData] = useState({});
+  const [userStockNames, setUserStockNames] = useState([]);
+  const [suggestedStockNames, setSuggestedStockNames] = useLocalStorage(
     "stockList",
     {}
   );
@@ -87,10 +88,12 @@ function App() {
         var list = [];
         if (response.data == null) {
           // console.log("setting");
-          setUserStockList([]);
-          loadSelectedStocks(suggestedStocks);
+          setUserStockNames([]);
+          loadSelectedStocks(suggestedStockNames);
         } else {
           let list = [];
+          // console.log(response.data)
+          setUserData(response.data);
           if (
             response.data.stockList.length &&
             response.data.stockList.length > 0
@@ -99,7 +102,7 @@ function App() {
               list.push(x.name);
               return list;
             });
-          setUserStockList(list);
+          setUserStockNames(list);
           loadSelectedStocks(list);
           // console.log(userStockList)
           // console.log(selectedStocksList)
@@ -113,8 +116,8 @@ function App() {
 
   useEffect(() => {
     if (!user) {
-      setUserStockList([]);
-      loadSelectedStocks(suggestedStocks);
+      setUserStockNames([]);
+      loadSelectedStocks(suggestedStockNames);
 
       // FetchUserInfo(user);
     }
@@ -122,14 +125,14 @@ function App() {
     if (user) {
       // deleteTickers()
       FetchUserInfo(user);
-      loadSelectedStocks(userStockList);
+      loadSelectedStocks(userStockNames);
     }
   }, [user]);
 
   useEffect(() => {
     getTickers().then(() => {
       // get dropdown list of stocks
-      loadSelectedStocks(suggestedStocks); // load stock info for all suggested stocks from local storage
+      loadSelectedStocks(suggestedStockNames); // load stock info for all suggested stocks from local storage
     });
   }, []);
 
@@ -146,8 +149,8 @@ function App() {
               if (!cardInfo) {
                 return dataNotFound.push(ticker);
               }
-              setStockInfo((prevStockInfo) => {
-                prevStockInfo[ticker] = { ...response.data, cardInfo };
+                            setStockInfo((prevStockInfo) => {
+                prevStockInfo[ticker] = { ...response.data, cardInfo};
                 return { ...prevStockInfo };
               });
             }
@@ -165,34 +168,6 @@ function App() {
       });
     }
   };
-
-  // Load stock info for a particular stock
-  // const getStockData = (name) => {
-  //   axios
-  //     .get(tickerAPI + name)
-  //     .then((response) => {
-  //       if (response.data) {
-  //         // Stock Card info should be generated when new data fetched rather than running calculations on every render
-  //         const cardInfo = generateStockCardInfo(response.data);
-  //         if (!cardInfo) {
-  //           return window.alert(
-  //             `Not enough data found for symbol: ${name}. We suggest that you remove it. If this is incorrect, please try again.`
-  //           );
-  //         }
-  //         setStockInfo((prevStockInfo) => {
-  //           prevStockInfo[name] = { ...response.data, cardInfo };
-  //           return { ...prevStockInfo };
-  //         });
-  //       }
-  //     })
-  //     .then(() => {
-  //       if (!stockInfoLoaded) setStockInfoLoaded(true);
-  //     })
-  //     .catch((error) => {
-  //       // Handle any errors here
-  //       console.error("Error fetching data:", error);
-  //     });
-  // };
 
   // Get All stocks Tickers
   const getTickers = () => {
@@ -217,11 +192,11 @@ function App() {
     if (
       !searchStock ||
       !tickerList[searchStock] ||
-      suggestedStocks[searchStock]
+      suggestedStockNames[searchStock]
     )
       return;
 
-    setSuggestedStocks((prevSelectedStocks) => {
+    setSuggestedStockNames((prevSelectedStocks) => {
       const updatedSelectedStocks = {
         ...prevSelectedStocks,
         [searchStock]: searchStock,
@@ -243,17 +218,9 @@ function App() {
     deleteTickers([item]);
   };
 
-  // const deleteTicker = (ticker) => {
-  //   setSuggestedStocks((prevSelectedStocks) => {
-  //     const { [ticker]: _, ...updatedSelectedStocks } = prevSelectedStocks;
-  //     localStorage.setItem("stockList", JSON.stringify(updatedSelectedStocks));
-  //     return updatedSelectedStocks;
-  //   });
-  // };
-
   // Delete stock from suggested list
   const deleteTickers = (tickers) => {
-    setSuggestedStocks((prevSelectedStocks) => {
+    setSuggestedStockNames((prevSelectedStocks) => {
       const updatedSelectedStocks = { ...prevSelectedStocks };
       tickers.forEach((ticker) => {
         delete updatedSelectedStocks[ticker];
@@ -278,7 +245,7 @@ function App() {
     // e.preventDefault();
     refreshTicker(ticker);
     setTickerInfo(stockInfo[ticker]);
-    console.log(stockInfo[ticker]);
+    // console.log(stockInfo[ticker]);
     setOpenDialog(true);
   };
 
@@ -288,6 +255,8 @@ function App() {
     const { symbol, shortName, currentPrice, previousClose } = stockInfo;
     // If required properties are not available, do not generate card
     if (!(symbol && shortName && currentPrice && previousClose)) return null;
+
+    // console.log(userData);
     const curr = parseFloat(currentPrice).toFixed(2);
     const prev = parseFloat(previousClose);
     const priceChange = (curr - prev).toFixed(2).toString();
@@ -301,7 +270,7 @@ function App() {
       priceChange,
       percentChange,
       refreshing: false,
-    };
+          };
     return cardInfo;
   };
 
@@ -341,7 +310,7 @@ function App() {
     return skeletons;
   };
 
-  const selectedStocksList = Object.values(suggestedStocks);
+  const selectedStocksList = Object.values(suggestedStockNames);
 
   return (
     <ThemeProvider theme={theme}>
@@ -349,7 +318,7 @@ function App() {
         <Navbar
           user={user}
           setUser={setUser}
-          suggestedStocks={suggestedStocks}
+          suggestedStockNames={suggestedStockNames}
           brandmark={darkModeConstants[darkMode].brandmark}
           sx={{ bgcolor: "background.default" }}
         />
@@ -493,7 +462,7 @@ function App() {
           )}
           {stockInfoLoaded && (
             <>
-              <div style={{ padding: "20px" }}>
+              <div style={{ padding: "20px", width: "70%" }}>
                 <Grid
                   sx={{ mb: 1 }}
                   justifyContent="center"
@@ -509,9 +478,7 @@ function App() {
                     selectedStocksList.map((ticker) => {
                       const stockData = stockInfo[ticker];
                       if (!stockData) return null;
-                      // console.log("suggested : GOT stock data");
                       if (!("cardInfo" in stockData)) return null;
-                      // console.log("suggested : GOT card data");
                       return (
                         <StockCard
                           key={ticker}
@@ -523,8 +490,8 @@ function App() {
                     })}
                 </Grid>
               </div>
-              {stockInfo && userStockList.length > 0 && (
-                <div style={{ padding: "20px" }}>
+              {stockInfo && userStockNames.length > 0 && (
+                <div style={{ padding: "20px", width: "70%" }}>
                   <Divider
                     style={{
                       display: "flex",
@@ -533,7 +500,6 @@ function App() {
                     }}
                   >
                     <Typography
-                      item
                       color="text.primary"
                       variant="p"
                       style={{ alignItems: "left" }}
@@ -551,17 +517,17 @@ function App() {
                     xs={12}
                     md={12}
                   >
-                    {userStockList.map((ticker) => {
+                    {userStockNames.map((ticker) => {
                       const stockData = stockInfo[ticker];
                       if (!stockData) return null;
-                      // console.log("user info: GOT stock data");
                       if (!("cardInfo" in stockData)) return null;
-                      // console.log("user info: GOT Card data");
+                      let foundObj = userData.stockList.find(obj => obj.name == ticker);
+                      let userStockData = {...stockData, threshold: foundObj.threshold, isAbove: foundObj.isAbove}
                       return (
                         <StockCard
                           key={ticker}
                           user={user}
-                          stockData={stockData}
+                          stockData={userStockData}
                           onClick={refreshTicker}
                         />
                       );

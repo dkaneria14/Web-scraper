@@ -10,7 +10,7 @@ import { Grid } from "@mui/material";
 import './StockCard.css';
 import { CircularProgress } from "@mui/material";
 import StockDialog from "./StockDialog";
-import { useState } from "react";
+import {useState } from "react";
 
 const trendOptions = {
   up: {textColor: 'green', img: Uptrend},
@@ -24,13 +24,12 @@ export default function StockCard(props) {
 
   // Dialog states 
   const [open, setOpen] = useState(false);
-  // const [dialogStock, setDialogStock] = useState({});
 
   let priceDirection;
   if (!cardInfo.refreshing) {
     priceDirection = cardInfo.percentChange.includes("-") ? "-" : "+"
   }
-
+  
   const handleStockDialog = () => {
     // setting stock info for that respective dialog box, then open dialog with setOpen = true 
     setOpen(true);
