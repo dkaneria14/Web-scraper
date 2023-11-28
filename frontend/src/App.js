@@ -45,6 +45,7 @@ function App() {
     "stockList",
     {}
   );
+  const [userStockThresholds, setUserStockThresholds] = useState({});
   const [searchStock, setSearchStock] = useState("");
   const [stockInfo, setStockInfo] = useState({});
   const [stockInfoLoaded, setStockInfoLoaded] = useState(false);
@@ -85,24 +86,17 @@ function App() {
     })
       .then((response) => {
         // console.log(response.data);
-        var list = [];
         if (response.data == null) {
           // console.log("setting");
           setUserStockNames([]);
           loadSelectedStocks(suggestedStockNames);
         } else {
           let list = [];
-          // console.log(response.data)
-          setUserData(response.data);
-          if (
-            response.data.stockList.length &&
-            response.data.stockList.length > 0
-          )
-            response.data.stockList.map((x) => {
-              list.push(x.name);
-              return list;
-            });
-          setUserStockNames(list);
+          if (response.data && response.data.stockList) {
+            list = Object.keys(response.data.stockList);
+            setUserStockThresholds(response.data.stockList);
+          }
+          setUserStockList(list);
           loadSelectedStocks(list);
           // console.log(userStockList)
           // console.log(selectedStocksList)
@@ -121,13 +115,15 @@ function App() {
 
       // FetchUserInfo(user);
     }
-
     if (user) {
       // deleteTickers()
       FetchUserInfo(user);
-      loadSelectedStocks(userStockNames);
     }
   }, [user]);
+
+  useEffect(() => {
+    loadSelectedStocks(userStockList);
+  }, [userStockThresholds])
 
   useEffect(() => {
     getTickers().then(() => {
@@ -146,11 +142,12 @@ function App() {
           axios.get(tickerAPI + ticker).then((response) => {
             if (response.data) {
               var cardInfo = generateStockCardInfo(response.data);
+              const userThreshold = userStockThresholds[ticker];
               if (!cardInfo) {
                 return dataNotFound.push(ticker);
               }
-                            setStockInfo((prevStockInfo) => {
-                prevStockInfo[ticker] = { ...response.data, cardInfo};
+              setStockInfo((prevStockInfo) => {
+                prevStockInfo[ticker] = { ...response.data, cardInfo, userThreshold };
                 return { ...prevStockInfo };
               });
             }
@@ -462,7 +459,7 @@ function App() {
           )}
           {stockInfoLoaded && (
             <>
-              <div style={{ padding: "20px", width: "70%" }}>
+              <div style={{ padding: "20px", width: "70%"}}>
                 <Grid
                   sx={{ mb: 1 }}
                   justifyContent="center"
@@ -490,7 +487,7 @@ function App() {
                     })}
                 </Grid>
               </div>
-              {stockInfo && userStockNames.length > 0 && (
+              {stockInfo && userStockList.length > 0 && (
                 <div style={{ padding: "20px", width: "70%" }}>
                   <Divider
                     style={{
@@ -527,7 +524,8 @@ function App() {
                         <StockCard
                           key={ticker}
                           user={user}
-                          stockData={userStockData}
+                          stockData={stockData}
+                          userThreshold={userStockThresholds[ticker]}
                           onClick={refreshTicker}
                         />
                       );

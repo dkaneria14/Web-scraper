@@ -8,8 +8,12 @@ class Stock(BaseModel):
 
 class User(BaseModel):
     email: str
-    stockList:list[Stock]
+    stockList: dict[str, Stock]
         
 
 class EmailRequest(BaseModel):
     email: str
+
+class EmailStockRequest(BaseModel):
+    email: str
+    stock: str

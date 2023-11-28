@@ -18,7 +18,7 @@ import apiEndpoint from "../apiEndpoint";
 import axios from "axios";
 
 const StockDialog = (props) => {
-  const { open, setOpen, user, onClick } = props;
+  const { open, setOpen, user, onClick, userThreshold} = props;
   const {
     shortName,
     symbol,
@@ -29,21 +29,19 @@ const StockDialog = (props) => {
     peRatio,
     currentPrice,
     dayHigh,
-    dayLow,
-    threshold,
-    isAbove,
+    dayLow
   } = props.stockInfo;
 
   const [updateUserStock, setUpdateUserStock] = useState({});
-  const [isAboveValue, setIsAbove] = useState(isAbove == false ? false : true);
-  const [thresholdValue, setThreshold] = useState(threshold || 0);
+  const [isAbove, setIsAbove] = useState(userThreshold ? userThreshold.isAbove : true);
+  const [threshold, setThreshold] = useState(userThreshold ? userThreshold.threshold : 0);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({});
   const [openAlert, setOpenAlert] = useState(false);
 
   // endpoints
   const postUserStock = apiEndpoint + "/insertList/";
-
+  const postDeleteUserStock = apiEndpoint + "/deleteStock/";
   // static labels for button
   // const DialogButtonLabel = {
   //   saveAndAdd: { label: "Save and Add", disabled: false },
@@ -64,6 +62,10 @@ const StockDialog = (props) => {
       type: "error",
       msg: "Error processing request. Try again later.",
     },
+    removed: {
+      type: "success",
+      msg: "The stock was removed from your watchlist!"
+    }
   };
 
   const getCurrentDate = () => {
@@ -83,11 +85,9 @@ const StockDialog = (props) => {
       date: getCurrentDate(),
     };
 
-    var newStockList = [newStockData];
-
     var newUpdatedObj = {
       email: user,
-      stockList: newStockList,
+      stockList: { [symbol]: newStockData },
     };
     return newUpdatedObj;
   };
@@ -95,14 +95,14 @@ const StockDialog = (props) => {
   useEffect(() => {
     setUpdateUserStock({
       email: user,
-      stockList: [
+      stockList:  { [symbol]: 
         {
           name: symbol,
           threshold: thresholdValue,
           isAbove: isAboveValue,
           date: getCurrentDate(),
         },
-      ],
+      },
     });
   }, []);
 
@@ -132,8 +132,30 @@ const StockDialog = (props) => {
         setLoading(false);
         setOpenAlert(true);
         // setOpen(false);
+        window.location.reload();
       });
   };
+
+  const deleteStockFromList = () => {
+    const payload = {"email": user, "stock": symbol };
+    setLoading(true);
+    axios
+      .post(postDeleteUserStock, payload)
+      .then((response) => {
+        // Handle the response data
+        setAlert(alerts.removed);
+        setOpenAlert(true);
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error("Error:", error);
+        setAlert(alerts.error);
+      })
+      .finally(() => {
+        setLoading(false);
+        window.location.reload();
+      });
+  }
 
   // Close Dialog
   const handleClose = () => {
@@ -145,6 +167,14 @@ const StockDialog = (props) => {
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
+
+  // Delete Stock Dialog
+  const handleDelete = () => {
+    const confirm = window.confirm(`Do you want to remove ${symbol} - ${shortName} from your watchlist?`);
+    if (confirm) {
+      deleteStockFromList();
+    }
+  }
 
   const convertToBillion = (number) => {
     const absNumber = Math.abs(number);
@@ -185,8 +215,7 @@ const StockDialog = (props) => {
           display: "flex",
           justifyContent: "center",
         }}
-        sx={{ bgcolor: "background.default" }}
-      >
+        sx={{ bgcolor: "background.default" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <span style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
             {shortName} - {symbol}
@@ -211,31 +240,35 @@ const StockDialog = (props) => {
           {stockDialogInfo("Price to Earnings Ratio:", peRatio)}
           {user && (
             <Grid item>
-              <Threshold
-                threshold={thresholdValue}
-                setThreshold={setThreshold}
-                isAbove={isAboveValue}
-                setIsAbove={setIsAbove}
-                sx={{ bgcolor: "background.default" }}
-              />
+              <Card sx={{ borderRadius: "1em", m: 2, bgcolor: "action.hover" }}>
+                <CardContent>
+                  <Threshold
+                    threshold={threshold}
+                    setThreshold={setThreshold}
+                    isAbove={isAbove}
+                    setIsAbove={setIsAbove}
+                    sx={{ bgcolor: "background.default" }}
+                  />
+                </CardContent>
+              </Card>
             </Grid>
           )}
           {!user && (
             <Grid item>
-              <Typography>
-                Sign in to add this stock to your watchlist.
-              </Typography>
+              <Typography>Sign in to add this stock to your watchlist.</Typography>
             </Grid>
           )}
         </Grid>
       </DialogContent>
       <DialogActions
         style={{ justifyContent: "space-between", padding: "16px" }}
-        sx={{ bgcolor: "background.default" }}
-      >
-        <span style={{ fontSize: "0.8rem", color: "rgb(128, 128, 128)" }}>
-          Date: {getCurrentDate()}
-        </span>
+        sx={{ bgcolor: "background.default" }}>
+        {user && (
+          <Button color='error' onClick={handleDelete} sx={{ m: 1 }}>
+            Remove Stock
+          </Button>
+        )}
+        <span style={{ fontSize: "0.8rem", color: "rgb(128, 128, 128)" }}>Date: {getCurrentDate()} </span>
         <span>
           <Button onClick={handleClose} autoFocus sx={{ m: 1 }}>
             Close
