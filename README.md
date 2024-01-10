@@ -1,7 +1,72 @@
-# Web-scraper
+<p align="center">
+  <img src="https://i.imgur.com/TFXqYDa.jpeg" alt="Alt Text">
+</p>
+
 
 #### Hosted at: [https://stockwatch.cloud/](https://stockwatch.cloud/)
 
+## Introduction
+This COE714 project focuses on the creation of a web scraper website that would offer customers real-time notifications on price variations for certain stocks set by the user. This service allows consumers to specify personalized price change thresholds and receive timely notifications through email, allowing them to make educated investing decisions.
+
+This project's major purpose is to create and construct a comprehensive website capable of monitoring and analyzing stock pricing changes for specific stocks set by users. Users may use this tool to remain up to date on the pricing dynamics of Stocks they are interested in acquiring. The scraper will gather data in a systematic manner, process it, and inform users via email when prices fall below or surpass predefined limits.
+The Project's Scope
+The following important components are included in the project:
+#### 1. Implementation of a Web Scraper
+#### 2. Design of the User Interface (UI)
+#### 3. Notification System through Email
+#### 4. Threshold Configuration Functionality
+
+## Features
+
+### 1. User Friendly UI:  
+Allows easy interaction, setting preferences, and customizing email notifications. Also added feature of “Night Mode” for a darker theme.
+
+![Alt Text](https://i.imgur.com/rETGyCS.jpg)
+
+### 2. User Customizable Thresholds:  
+Enables users to set personalized pricing alerts.
+
+<div align="center">
+  <img src="https://imgur.com/Aqa0WeP.jpg" alt="Alt Text">
+</div>
+
+
+### 3. Automated Email Alerts: 
+Sends timely notifications based on user-defined price thresholds.
+
+<div align="center">
+  <img src="https://imgur.com/hHMHDb8.jpg" alt="Alt Text">
+</div>
+
+### 4. User Registration/Login (Custom Dashboard):  
+Users can create an account by registering or logging in to view their custom/specific stock portfolios.
+
+![Alt Text](https://i.imgur.com/rETGyCS.jpg)
+
+## Techstack Used
+
+<div align="center">
+  <img src="https://imgur.com/UJZRliF.jpg" alt="Alt Text">
+</div>
+
+**Frontend**: React, HTML, CSS, MaterialUI
+
+**Backend**: Python
+
+**Key Python Libraries**: APScheduler, FastAPI, PyMongo, uvicorn
+
+**Database**: MongoDB
+
+**API**: YFinance API was primarily used for stock scraping
+
+**Hosting**: Oracle Cloud VM, Docker, Nginx, Certbot for SSI, GitHub Actions for CI/CD
+
+
+## Status
+Rudimentary functioning, under optimization.✅
+
+
+## Installation/Setup
 Pip libraries to install (use `pip3 install -r requirements.txt` to install them for you): 
 -pymongo
 -fastapi
