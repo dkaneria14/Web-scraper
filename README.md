@@ -41,7 +41,9 @@ Sends timely notifications based on user-defined price thresholds.
 ### 4. User Registration/Login (Custom Dashboard):  
 Users can create an account by registering or logging in to view their custom/specific stock portfolios.
 
-![Alt Text](https://i.imgur.com/rETGyCS.jpg)
+<div align="center">
+  <img src="https://imgur.com/ORWIVdl.jpg" alt="Alt Text">
+</div>
 
 ## Techstack Used
 
