@@ -61,7 +61,7 @@ Users can create an account by registering or logging in to view their custom/sp
 
 **API**: YFinance API was primarily used for stock scraping
 
-**Hosting**: Oracle Cloud VM, Docker, Nginx, Certbot for SSI, GitHub Actions for CI/CD
+**Hosting**: Oracle Cloud VM, Docker, Nginx, Certbot for SSL, GitHub Actions for CI/CD
 
 
 ## Status
