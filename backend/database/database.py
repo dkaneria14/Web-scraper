@@ -35,6 +35,13 @@ class DataBase:
             return False
         else:
             return self.collection.insert_one({'email': email}).inserted_id
+        
+    def delete_verified_email(self, email: str):
+        self.collection = DataBase.DB["VerifiedEmails"]
+        existing_email = self.collection.find_one_and_delete({'email': email}, {'_id': 0})
+        return existing_email
+        
+    
 
     def store_verification_code(self, email: str, code: str):
         self.collection = DataBase.DB["VerificationCodes"]
@@ -84,6 +91,13 @@ class DataBase:
             user_data["_id"] = str(user_data["_id"])
 
         return user_data
+    
+    def delete_user(self, email: str):
+        self.collection = DataBase.DB["UserInformation"]
+        query = {"email": email}
+        user_data = self.collection.delete_many(query)
+        return "Deleted Account"
+
 
 
     def update_stock_prices(self, stockName : str, currentPrice: float, thresholdValue : float, emailOfUser : str):
