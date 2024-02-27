@@ -3,6 +3,8 @@ from emailService import EmailService
 from pydantic import BaseModel
 from database.database import DataBase
 import secrets
+from decouple import config
+from cryptography.fernet import Fernet
 
 # Init router
 router = APIRouter()
@@ -17,6 +19,21 @@ def checkEmailVerification(email: str):
 def generate_verification_code():
     code = secrets.randbelow(1000000)
     return f'{code:06d}'
+
+@router.get("/email/unsubscribe/{encryptedEmail}")
+def unsubscribe(encryptedEmail: str):
+    f = Fernet(str.encode(config('SYMMETRIC_KEY')))
+    decryptedEmail = bytes.decode(f.decrypt(str.encode(encryptedEmail)))
+    db = DataBase()
+    deleted = False
+    if (db.get_verified_email(decryptedEmail)):
+        db.delete_verified_email(decryptedEmail)
+        deleted = db.delete_user(decryptedEmail)
+         # Spam Laws Compliance
+        body = f'You have successfully unsubscribed from all emails and your account has been deleted.'
+        EmailService().send_email(f'Successfully Unsubscribed and Data Deleted.',body,decryptedEmail)
+    return deleted
+
 
 class EmailAddress(BaseModel):
     email: str
